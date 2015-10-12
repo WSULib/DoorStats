@@ -1,0 +1,150 @@
+/* gradient blue tallies */
+.ref_type_1 {
+	color:#FFCC33; 	
+}
+
+.ref_type_2 {
+	color:#238B8B; 	
+}
+
+.ref_type_3 {
+	color:#3b3b3b;	 
+}
+
+/* Shiffman only, Consultation */
+.ref_type_4 {
+	color:#9CB2B2;	 
+}
+
+/* general */
+#footer {
+	margin-bottom:40px;
+	text-align:center;
+}
+.refstats_logo{	
+	margin-top:20px;
+	margin-bottom:10px;
+	height:40px;
+}
+.logo_prefix{
+	/* color:#FFCC33; */
+}
+.no_dec:link, .no_dec:visited, .no_dec:hover, .no_dec:active  {
+	text-decoration:none;
+	color:black;
+}
+
+/* buttons */
+.ref_type_button {
+	background-color:#238B8B;
+	border-color:#238B8B
+}
+
+.ref_type_button:hover {
+	background-color:#046060;
+}
+
+.btn-WSUgreen {
+	background-color:#9CB2B2;
+	border-color:#9CB2B2;
+	color:white;	
+}
+
+#breadcrumb .btn-WSUgreen {
+	margin-top:5px;
+}
+
+.btn-WSUgreen:hover, .btn-WSUgreen:active, .btn-WSUgreen:target, .btn-WSUgreen:focus {
+	background-color:#6f6f6f;
+	color:white;
+}
+
+/* bootstrap pager override */
+.pager li>a, .pager li>span {
+	border-radius:4px;
+}
+
+#refreport h4 {
+    cursor:pointer;
+}
+
+#refreport table{
+	font-family:"Lucida Console", Monaco, monospace;
+}
+
+#refreport table td{
+	border-top:none;
+	padding:0px;		
+}
+
+.time_col{
+	width:45px;
+}
+
+#edit_table h4 {
+    cursor:pointer;
+}
+
+/* colors */
+.light_green {
+	color:#dee6e6; 
+}
+
+.yellow {
+	color:#fc3; 
+}
+
+.dark_green {
+	color:#093f39; 
+}
+
+/* report */
+.stat_name{
+	font-weight:bold;
+}
+
+#report_messages{
+	display:none;
+}
+
+#export{
+	display:none;
+}
+
+#quickstats{
+	display:none;
+}
+
+.checkbox_grid li {
+    display: block;
+    float: left;
+    width: 25%;
+}
+
+.checkbox {
+	margin-top:0px;
+	margin-bottom:5px;
+}
+
+.raw_json{
+	display:none;
+}
+
+.quickstats_dividers {
+	margin-top:35px;
+	margin-bottom:35px;
+}
+
+#logo{
+	height:50px;
+}
+.spacer40 {
+	margin-bottom:40px;
+}
+
+
+
+
+
+
+

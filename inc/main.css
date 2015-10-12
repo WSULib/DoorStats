@@ -1,0 +1,63 @@
+html {
+	overflow-y:scroll;	
+}
+
+input[name="type"] {
+	display: none;
+}
+
+.container.tool{
+	/*margin-top:20px;*/
+	max-width: 554px;
+	min-width:320px;
+}
+
+.container.help{
+	margin-top:70px;	
+	min-width:320px;
+}
+
+.row-fluid {
+    margin-bottom: 10px;
+}
+
+#header {
+	text-align:center;
+}
+
+#feedback{
+	height:20px;	
+	text-align:center;
+	clear:both;			
+}
+
+#logo{
+	height:50px;
+}
+
+#msg{
+	margin:0px;
+	padding:0px;
+}
+
+.actions {
+	margin-top: 30px;
+}
+
+#ref_actions {
+	text-align:center;
+}
+
+#ref_actions div {
+	margin-top:15px;
+}
+
+.bookmarklet {
+	text-align:center;
+}
+
+.bookmark-text {
+	font-size: 80%;
+	font-weight: bold;
+	font-style: italic;
+}

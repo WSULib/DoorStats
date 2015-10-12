@@ -1,0 +1,72 @@
+#breadcrumb {
+}
+
+#transactions_table {
+	max-height:480px;
+	overflow-y:scroll;
+	overflow: -moz-scrollbars-vertical;
+}
+
+/* force scrollbar */
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+::-webkit-scrollbar:vertical {
+    width: 11px;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white; /* should match background, can't be transparent */
+    background-color: rgba(0, 0, 0, .5);
+}
+
+::-webkit-scrollbar-track { 
+    background-color: #fff; 
+    border-radius: 8px; 
+} 
+
+.hour_radio {
+	visibility:hidden;
+}
+
+#stats_graph {
+    margin-top:20px;
+}
+
+#no_trans {
+    margin-top:40px;
+    text-align:center;
+}
+
+.btn-WSUgreen {
+    background-color:#9CB2B2;
+    border-color:#9CB2B2;
+    color:white;
+}
+
+.btn-WSUgreen:hover, .btn-WSUgreen:active, .btn-WSUgreen:target, .btn-WSUgreen:focus {
+    background-color:#6f6f6f;
+    color:white;
+}
+
+#export_data {
+    text-align:right;       
+}
+
+#export_data a {
+    text-decoration:none;    
+    color:#238B8B;
+    color:black;
+}
+
+@media (max-width: 992px) {
+  #export_data {
+    text-align:left;
+  }
+}
