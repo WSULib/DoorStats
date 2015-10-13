@@ -27,23 +27,19 @@ if (isset($_GET['id']) ) {
 			$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' "; 
 			mysqli_query($link, $sql) or die(mysqli_error());
 
+
 			// if coming from index.php, return
 			if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
 				header('Location: ../', true, 302);
 			}
-?>
 
-		<div class="row">
-			<div class="col-md-10">
-				<p style="color:green;">Success!  Transaction edited.</p>
-				<a class="btn btn-default" href='list.php'>Back to Transactions</a> 
-			</div>
-		</div>
+			// report success
+			reporter("green", "<div class='row'><div class='col-md-6'>Gate count edited. <a href='list.php'>Back to gate count management.</a>", " ");
 
-<?php
 	} 
 	else {
-
+		reporter("red","Could not edit gate count."," ");
+		echo '<a class="btn btn-default" href="list.php">Back to Transactions</a>';
 	}
 }
 else {	

@@ -1,18 +1,18 @@
 /* gradient blue tallies */
-.ref_type_1 {
+.yellow {
 	color:#FFCC33; 	
 }
 
-.ref_type_2 {
+.dark_green {
 	color:#238B8B; 	
 }
 
-.ref_type_3 {
+.black {
 	color:#3b3b3b;	 
 }
 
 /* Shiffman only, Consultation */
-.ref_type_4 {
+.gray_green {
 	color:#9CB2B2;	 
 }
 
@@ -37,7 +37,8 @@
 /* buttons */
 .ref_type_button {
 	background-color:#238B8B;
-	border-color:#238B8B
+	border-color:#238B8B;
+	color:white;
 }
 
 .ref_type_button:hover {

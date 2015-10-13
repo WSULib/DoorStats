@@ -15,17 +15,23 @@ include('../inc/functions.php');
 <?php
 if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 
-	// check that time block has no value
 	// checks if hour block has transaction					
 	$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
 	$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
 	$total_results = mysqli_num_rows($result);
 
+	// check if count exists for current hour
 	if ($total_results > 0){
 		$row = mysqli_fetch_assoc($result);
 		reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
 	}
 
+	// check if counts submitted are equal and valid
+	elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
+		reporter("red", "Error: Counts do not match or are not numbers.  <a href='list.php'>Back to gate count management.</a>  ", " ");						
+	}
+
+	// if all passes, submit
 	else{
 
 		foreach($_REQUEST AS $key => $value) { $_REQUEST[$key] = mysqli_real_escape_string($link, $value); } 
@@ -43,17 +49,9 @@ if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 		$sql = "INSERT INTO `$default_table_name` ( `gate_number` ,  `location` , `ip`, `timestamp`, `original_timestamp` ) VALUES(  '{$_REQUEST['count1']}' ,  '{$_REQUEST['location']}' , '$IP', '$timestamp', '$original_timestamp' ) ";
 		$result = mysqli_query($link, $sql) or die(mysqli_error());
 
+		// report success
+		reporter("green", "<div class='row'><div class='col-md-6'>Gate count submitted. <a href='list.php'>Back to gate count management.</a>", " ");
 	
-	?>
-
-		<div class="row">
-			<div class="col-md-10">
-				<p style="color:green;">Success!  Transaction added.</p>
-				<a class="btn btn-default" href='list.php'>Back to Transactions</a> 
-			</div>
-		</div>
-
-<?php
 	}
 
 } 

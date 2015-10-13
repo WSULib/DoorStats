@@ -77,77 +77,71 @@ global $user_arrays;
 
 			elseif ($_COOKIE['location'] == 'NOPE') {
 				reporter("red", "Please Set Your Location", " ");		
-			}			
+			}	
+		}		
 
-			// register reference transaction
-			else {
+		// register reference transaction
+		else {
 
-				// checks if both counts are equal AND that both are integers
-				if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {
-					
-					$count = $_POST['count1'];
-				  	$ip = ipGrabber();
-					$location = $_COOKIE['location'];
-					$user_group = $_COOKIE['user_group'];
+			// checks if hour block has transaction					
+			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)=HOUR(NOW()) AND location = '$location'";
+			$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
+			$total_results = mysqli_num_rows($result);
 
-					// checks if hour block has transaction					
-					$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
-					$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
-					$total_results = mysqli_num_rows($result);
+			// check if count exists for current hour
+			if ($total_results > 0){
+				$row = mysqli_fetch_assoc($result);
+				reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
+			}
 
-					if ($total_results > 0){
-						$row = mysqli_fetch_assoc($result);
-						reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");						
-					}				
+			// check if counts submitted are equal and valid
+			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
+				reporter("red", "Error: Counts do not match or are not numbers.  <a href='list.php'>Back to gate count management.</a>  ", " ");						
+			}								
 
-					else {	
+			else {	
 
-						// submit gate
-						/* generate timestamps: 
-							$hour_block_timestamp --> dropping back to 00 minute of current hour (only one allowed for per hour block)
-							$original_timestamp --> actual time of transaction, preserved in DB
-						*/
-						$hour_block_timestamp = date("Y-m-d H");
-						$original_timestamp = date("Y-m-d H:i:s");
+				// submit gate
+				/* generate timestamps: 
+					$hour_block_timestamp --> dropping back to 00 minute of current hour (only one allowed for per hour block)
+					$original_timestamp --> actual time of transaction, preserved in DB
+				*/
+				$hour_block_timestamp = date("Y-m-d H");
+				$original_timestamp = date("Y-m-d H:i:s");
 
-						$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$ip')";
-						echo $query;
+				$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$ip')";
+				echo $query;
 
-						if($stmt = mysqli_prepare($link, $query)) {
+				if($stmt = mysqli_prepare($link, $query)) {
 
-						    $insert_result = mysqli_stmt_execute($stmt);				    
+				    $insert_result = mysqli_stmt_execute($stmt);				    
 
-							if ($insert_result === TRUE) {
-								$_SESSION['result'] = "success";
-								$_SESSION['date'] = date("h:i:sa");
-								$_SESSION['gate_count_string'] = "$count";
-								$_SESSION['last_trans_id'] = mysqli_insert_id($link);
-							}
-							else {						
-								$_SESSION['result'] = "success";
-							}
-						    mysqli_stmt_close($stmt);
-
-						    // redirect to avoid multiple submissions
-						    header('Location: ./', true, 302);
-
-				   		}
-						// if it fails
-						else {
-							reporter("error", "Error: Submission Failed", " ");
-						}
-
+					if ($insert_result === TRUE) {
+						$_SESSION['result'] = "success";
+						$_SESSION['date'] = date("h:i:sa");
+						$_SESSION['gate_count_string'] = "$count";
+						$_SESSION['last_trans_id'] = mysqli_insert_id($link);
 					}
-		   		}	
-		   		// count is off
-		   	    else {
-		   	   		reporter("red", "Error: Counts do not match or are not numbers", " ");
-		   	    }	   	   
-			   				
-			} // cookie
-			userSetter();
-		} // post
+					else {						
+						$_SESSION['result'] = "success";
+					}
+				    mysqli_stmt_close($stmt);
 
+				    // redirect to avoid multiple submissions
+				    header('Location: ./', true, 302);
+
+		   		}
+				// if it fails
+				else {
+					reporter("error", "Error: Submission Failed", " ");
+				}
+
+			}
+   		}	
+		   			   	   
+			   				
+		} // cookie
+		userSetter();
 		
 		?>
 
@@ -181,7 +175,7 @@ global $user_arrays;
 							<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
 							<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm">
 						</div>	
-						<button type="submit" class="btn btn-default">Submit</button>
+						<button type="submit" class="btn ref_type_button btn-block">Submit</button>
 					</form>
 				</div>
 			</div>

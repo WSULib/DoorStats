@@ -152,7 +152,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	// push counts to graph
 	while($row = mysqli_fetch_array($result)) {		
-		$shown_hours[(int)$row['hour']][1].= "<span class='ref_type_{$row['gate_number']}'>".number_format($row['gate_number'])."</span>"; 		
+		$shown_hours[(int)$row['hour']][1].= "<span class='dark_green'>".number_format($row['gate_number'])."</span>"; 		
 	}
 
 	// push to page
