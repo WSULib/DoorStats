@@ -117,7 +117,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	# main index, current time	
 	if ($context == "index") {
-		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";		
+		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
 		$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 	
 	}
 

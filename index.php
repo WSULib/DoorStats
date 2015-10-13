@@ -48,7 +48,7 @@ global $user_arrays;
 		// if get
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			if (isset($_SESSION['result']) && $_SESSION['result'] == "success") {								
-				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Recorded ".number_format($_SESSION['gate_count_string'])." for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
+				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>".number_format($_SESSION['gate_count_string']).", recorded for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
 			}
 			elseif (isset($_SESSION['result']) && $_SESSION['result'] == "fail") {
 				reporter("red", "Error: Submission Failed", " ");
@@ -74,14 +74,10 @@ global $user_arrays;
 				$_SESSION['result'] = "location";				
 				header('Location: ./', true, 302);
 			}	
-
 			elseif ($_COOKIE['location'] == 'NOPE') {
 				reporter("red", "Please Set Your Location", " ");		
 			}	
-		}		
 
-		// register reference transaction
-		else {
 
 			// checks if hour block has transaction					
 			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)=HOUR(NOW()) AND location = '$location'";
@@ -91,17 +87,16 @@ global $user_arrays;
 			// check if count exists for current hour
 			if ($total_results > 0){
 				$row = mysqli_fetch_assoc($result);
-				reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
+				reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");						
 			}
-
 			// check if counts submitted are equal and valid
 			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
-				reporter("red", "Error: Counts do not match or are not numbers.  <a href='list.php'>Back to gate count management.</a>  ", " ");						
+				reporter("red", "Error: Counts do not match or are not numbers.", " ");						
 			}								
-
 			else {	
 
-				// submit gate
+				// SUBMIT GATE COUNT
+
 				/* generate timestamps: 
 					$hour_block_timestamp --> dropping back to 00 minute of current hour (only one allowed for per hour block)
 					$original_timestamp --> actual time of transaction, preserved in DB
@@ -109,7 +104,16 @@ global $user_arrays;
 				$hour_block_timestamp = date("Y-m-d H");
 				$original_timestamp = date("Y-m-d H:i:s");
 
-				$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$ip')";
+				// truncate count
+				$count = $_POST['count1'];
+
+				// get ip
+				$IP = IPgrabber();
+
+				// get location
+				$location = $_COOKIE['location'];
+
+				$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$IP')";
 				echo $query;
 
 				if($stmt = mysqli_prepare($link, $query)) {
@@ -135,12 +139,9 @@ global $user_arrays;
 				else {
 					reporter("error", "Error: Submission Failed", " ");
 				}
-
 			}
-   		}	
-		   			   	   
-			   				
-		} // cookie
+   		}
+
 		userSetter();
 		
 		?>

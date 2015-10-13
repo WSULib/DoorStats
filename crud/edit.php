@@ -24,7 +24,7 @@ if (isset($_GET['id']) ) {
 			}	
 			$timestamp = $date . " {$_REQUEST['hour']}";			
 			foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
-			$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' "; 
+			$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' ";			
 			mysqli_query($link, $sql) or die(mysqli_error());
 
 
@@ -36,14 +36,13 @@ if (isset($_GET['id']) ) {
 			// report success
 			reporter("green", "<div class='row'><div class='col-md-6'>Gate count edited. <a href='list.php'>Back to gate count management.</a>", " ");
 
-	} 
-	else {
-		reporter("red","Could not edit gate count."," ");
-		echo '<a class="btn btn-default" href="list.php">Back to Transactions</a>';
+		} 
+		else {
+			reporter("red","Could not edit gate count.  <a href='list.php'>Back to gate count management.</a>"," ");		
+		}
 	}
-}
-else {	
-	$row = mysqli_fetch_array ( mysqli_query($link, "SELECT * FROM `$default_table_name` WHERE `id` = '$id' ")); 
+	else {	
+		$row = mysqli_fetch_array ( mysqli_query($link, "SELECT * FROM `$default_table_name` WHERE `id` = '$id' ")); 
 
 ?>
 
