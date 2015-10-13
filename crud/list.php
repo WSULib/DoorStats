@@ -27,7 +27,7 @@ else {
 }					
 
 // perform query
-$query = "SELECT id, gate_number, location, ip, DATE_FORMAT(timestamp, '%r') AS print_timestamp, timestamp AS ordering_timestamp FROM $default_table_name WHERE DATE(timestamp) = DATE_ADD(CURDATE(), INTERVAL $page DAY) AND $location_where ORDER BY ordering_timestamp DESC";
+$query = "SELECT id, gate_number, location, building, ip, DATE_FORMAT(timestamp, '%r') AS hour_block, timestamp AS ordering_timestamp, original_timestamp FROM $default_table_name WHERE DATE(timestamp) = DATE_ADD(CURDATE(), INTERVAL $page DAY) AND $location_where ORDER BY ordering_timestamp DESC";
 $result = mysqli_query($link, $query) or trigger_error(mysqli_error());
 $total_day_stats = mysqli_num_rows($result);
 $results_date = date('l\, m\-j\-y', strtotime( ($page)." days" ));
@@ -111,7 +111,8 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 							<td><b>Location</b></td>
 							<td><b>Building</b></td> 
 							<td><b>Ip</b></td>
-							<td><b>Timestamp</b></td>
+							<td><b>Hour Block</b></td>
+							<td><b>Orig Record Time</b></td>
 							<td><b>Actions</b></td> 
 						</tr>
 						<?php	
@@ -129,7 +130,8 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 								echo "<td>" . nl2br( $row['location']) . "</td>";
 								echo "<td>" . nl2br( $row['building']) . "</td>";  
 								echo "<td>" . nl2br( $row['ip']) . "</td>";  
-								echo "<td>" . nl2br( $row['print_timestamp']) . "</td>";  
+								echo "<td>" . nl2br( $row['hour_block']) . "</td>";
+								echo "<td>" . nl2br( $row['original_timestamp']) . "</td>";  
 								echo "<td><a href=edit.php?id={$row['id']}>Edit</a> / <a href=delete.php?id={$row['id']}>Delete</a></td> "; 
 								echo "</tr>"; 
 							}	
