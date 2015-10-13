@@ -69,11 +69,11 @@ else {
 					<!-- add count -->
 					<div class="form-group">
 						<label for="count1">Enter New Count</label>
-						<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="enter door count here...">
+						<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="Enter count here">
 					</div>
 					<div class="form-group">
 						<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
-						<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm...">
+						<input type="text" class="form-control" name="count2" id="count2" placeholder="Re-enter to confirm">
 					</div>
 
 					<div class="form-group">

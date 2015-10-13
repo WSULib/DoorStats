@@ -9,16 +9,23 @@
 $config_file = "door_stats_config.php";
 
 // primary table name
-$default_table_name = "door_stats_gh_dev";
+$default_table_name = "door_stats_dev";
 
 // location array used to populate location dropdowns around app
+/*
+	Note: For gate locations, the structure of the key (first value in the associative array below) is important.  
+	When data is inserted into the database, a MySQL trigger fires splitting on the pipe "|" character, using the first part
+	as the building name.
+
+	For example, "PURDY|EAST" will split on the pipe, grabbing "PURDY" as the building name.  The location will remain, "PURDY|EAST"
+*/
 $location_array = array(
 	"NOPE" => "Please Select Your Door",
-	"PURDYEAST" => "Purdy East (PK)",
-	"PURDYWEST" => "Purdy West (PK)",
-	"KRESGEWEST" => "Kresge West (PK)" ,
-	"UGLEAST" => "Undergraduate East (UGL)",
-	"UGLWEST" => "Undergraduate West (UGL)"	
+	"PURDY|EAST" => "Purdy East (PK)",
+	"PURDY|WEST" => "Purdy West (PK)",
+	"KRESGE|WEST" => "Kresge West (PK)" ,
+	"UGL|EAST" => "Undergraduate East (UGL)",
+	"UGL|WEST" => "Undergraduate West (UGL)"	
 );
 
 // location array used to populate location dropdowns around app

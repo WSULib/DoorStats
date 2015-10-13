@@ -74,9 +74,7 @@ global $user_arrays;
 				$_SESSION['result'] = "location";				
 				header('Location: ./', true, 302);
 			}	
-			elseif ($_COOKIE['location'] == 'NOPE') {
-				reporter("red", "Please Set Your Location", " ");		
-			}	
+				
 
 
 			// checks if hour block has transaction					
@@ -92,7 +90,11 @@ global $user_arrays;
 			// check if counts submitted are equal and valid
 			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
 				reporter("red", "Error: Counts do not match or are not numbers.", " ");						
-			}								
+			}	
+			// check location set
+			elseif ($_COOKIE['location'] == 'NOPE') {
+				reporter("red", "Please Set Your Location", " ");		
+			}							
 			else {	
 
 				// SUBMIT GATE COUNT
@@ -114,7 +116,6 @@ global $user_arrays;
 				$location = $_COOKIE['location'];
 
 				$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$IP')";
-				echo $query;
 
 				if($stmt = mysqli_prepare($link, $query)) {
 
@@ -137,7 +138,7 @@ global $user_arrays;
 		   		}
 				// if it fails
 				else {
-					reporter("error", "Error: Submission Failed", " ");
+					reporter("red", "Error: Submission Failed.  Failed on query:<br><br>$query", " ");
 				}
 			}
    		}
@@ -170,7 +171,7 @@ global $user_arrays;
 					<form action="." method="POST">
 						<div class="form-group">
 							<!-- <label for="count1">Enter Counts</label> -->
-							<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="Enter door count here">
+							<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="Enter count here">
 						</div>
 						<div class="form-group">
 							<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->

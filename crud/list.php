@@ -109,7 +109,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 							<td><b>Id</b></td> 
 							<td><b>Recorded Count</b></td> 
 							<td><b>Location</b></td>
-							<td><b>User Group</b></td> 
+							<td><b>Building</b></td> 
 							<td><b>Ip</b></td>
 							<td><b>Timestamp</b></td>
 							<td><b>Actions</b></td> 
@@ -127,7 +127,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 								echo "<td>" . nl2br( $row['id']) . "</td>";  
 								echo "<td class='gate_number{$row['gate_number']}'>" . nl2br( number_format($row['gate_number']) ) . "</td>";  
 								echo "<td>" . nl2br( $row['location']) . "</td>";
-								echo "<td>" . nl2br( $row['user_group']) . "</td>";  
+								echo "<td>" . nl2br( $row['building']) . "</td>";  
 								echo "<td>" . nl2br( $row['ip']) . "</td>";  
 								echo "<td>" . nl2br( $row['print_timestamp']) . "</td>";  
 								echo "<td><a href=edit.php?id={$row['id']}>Edit</a> / <a href=delete.php?id={$row['id']}>Delete</a></td> "; 
