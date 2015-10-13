@@ -133,7 +133,7 @@ global $user_arrays;
 				    mysqli_stmt_close($stmt);
 
 				    // redirect to avoid multiple submissions
-				    header('Location: ./', true, 302);
+				    // header('Location: ./', true, 302);
 
 		   		}
 				// if it fails
