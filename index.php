@@ -25,14 +25,7 @@ global $user_arrays;
 	<script src="inc/bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
 
 	<!-- Local JS -->
-	<script src="inc/functions.js"></script>	
-
-	<!-- User Login Testing -->
-	<script src="inc/jquery.cookie.js" type="text/javascript"></script>
-	<script src="inc/userData.js"></script>	
-
-
-
+	<script src="inc/functions.js"></script>
 </head>
 
 <body onBlur="window.focus();">	
@@ -41,7 +34,7 @@ global $user_arrays;
 		<div class="row-fluid">
 			<div id="header" class="col-md-12">								
 				<a class="no_dec" href=".">
-					<img class="refstats_logo" src="inc/refstats_logo.png" >
+					<img class="refstats_logo" src="inc/logo_small.png" >
 				</a>
 			</div>
 		</div>
@@ -52,10 +45,10 @@ global $user_arrays;
 		locationSetter();			
 		userSetter();
 
-		// 
+		// if get
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			if (isset($_SESSION['result']) && $_SESSION['result'] == "success") {								
-				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Submitted '{$_SESSION['ref_type_string']}' at ".$_SESSION['date']."</a>");
+				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Recorded ".number_format($_SESSION['gate_count_string'])." for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
 			}
 			elseif (isset($_SESSION['result']) && $_SESSION['result'] == "fail") {
 				reporter("red", "Error: Submission Failed", " ");
@@ -71,6 +64,7 @@ global $user_arrays;
 			userSetter();
 		}
 
+		// else, if post
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' && !array_key_exists("login_refer",$_REQUEST)) {
 			
 			// set location
@@ -79,48 +73,77 @@ global $user_arrays;
 				setcookie('location', $_POST['location']);				
 				$_SESSION['result'] = "location";				
 				header('Location: ./', true, 302);
-			}			
+			}	
+
 			elseif ($_COOKIE['location'] == 'NOPE') {
 				reporter("red", "Please Set Your Location", " ");		
-			}
-			elseif ($_COOKIE['user_group'] == 'NOPE' && array_key_exists($_COOKIE['location'], $user_arrays) ) {
-				reporter("red", "Please Select Your User Type", " ");
-			}
+			}			
 
 			// register reference transaction
 			else {
-			  	$type = $_POST['type'];
-			  	$ip = ipGrabber();
-				$location = $_COOKIE['location'];
-				$user_group = $_COOKIE['user_group'];
 
-				if (mysqli_connect_errno()) {
-					reporter("red", "Error: Submission Failed" . mysqli_connect_error());
-				}
+				// checks if both counts are equal AND that both are integers
+				if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {
+					
+					$count = $_POST['count1'];
+				  	$ip = ipGrabber();
+					$location = $_COOKIE['location'];
+					$user_group = $_COOKIE['user_group'];
 
-				$query = "INSERT into ref_stats(ref_type, location, user_group, ip) VALUES ('$type', '$location', '$user_group', '$ip')";
+					// checks if hour block has transaction					
+					$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
+					$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
+					$total_results = mysqli_num_rows($result);
 
-				if($stmt = mysqli_prepare($link, $query)) {
+					if ($total_results > 0){
+						$row = mysqli_fetch_assoc($result);
+						reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");						
+					}				
 
-				    $insert_result = mysqli_stmt_execute($stmt);				    
+					else {	
 
-					if ($insert_result === TRUE) {
-						$_SESSION['result'] = "success";
-						$_SESSION['date'] = date("h:i:sa");
-						$_SESSION['ref_type_string'] = $ref_type_hash[$_POST['type']];
-						$_SESSION['last_trans_id'] = mysqli_insert_id($link);
+						// submit gate
+						/* generate timestamps: 
+							$hour_block_timestamp --> dropping back to 00 minute of current hour (only one allowed for per hour block)
+							$original_timestamp --> actual time of transaction, preserved in DB
+						*/
+						$hour_block_timestamp = date("Y-m-d H");
+						$original_timestamp = date("Y-m-d H:i:s");
+
+						$query = "INSERT INTO $default_table_name(gate_number, location, timestamp, original_timestamp, ip) VALUES ('$count', '$location', '$hour_block_timestamp', '$original_timestamp', '$ip')";
+						echo $query;
+
+						if($stmt = mysqli_prepare($link, $query)) {
+
+						    $insert_result = mysqli_stmt_execute($stmt);				    
+
+							if ($insert_result === TRUE) {
+								$_SESSION['result'] = "success";
+								$_SESSION['date'] = date("h:i:sa");
+								$_SESSION['gate_count_string'] = "$count";
+								$_SESSION['last_trans_id'] = mysqli_insert_id($link);
+							}
+							else {						
+								$_SESSION['result'] = "success";
+							}
+						    mysqli_stmt_close($stmt);
+
+						    // redirect to avoid multiple submissions
+						    header('Location: ./', true, 302);
+
+				   		}
+						// if it fails
+						else {
+							reporter("error", "Error: Submission Failed", " ");
+						}
+
 					}
-					else {						
-						$_SESSION['result'] = "success";
-					}
-				    mysqli_stmt_close($stmt);
-				    header('Location: ./', true, 302);
-
-			   }
-			   // if it fails
-			   else {
-					reporter("error", "Error: Submission Failed ", " ");
-			   }				
+		   		}	
+		   		// count is off
+		   	    else {
+		   	   		reporter("red", "Error: Counts do not match or are not numbers", " ");
+		   	    }	   	   
+			   				
 			} // cookie
 			userSetter();
 		} // post
@@ -134,6 +157,7 @@ global $user_arrays;
 			<div class="row-fluid">
 				<div class="col-md-12">
 					<form action="" method="POST">
+					<label for="location">Select Location</label>
 					<select class="form-control" id="location" name="location" onchange=this.form.submit()>
 						<?php 
 						makeLocationDropdown(True,$_COOKIE['location']);						
@@ -148,64 +172,19 @@ global $user_arrays;
 
 			<div class="row-fluid">
 				<div class="col-md-12">
-				<form action="" method="POST">
-					<input name="type" type="number" value="1"></input>
-					<button type="submit" class="btn ref_type_button btn-primary btn-block btn-lg">Directional</button>
-				</form>
-				</div>
-			</div> 
-
-			<div class="row-fluid">
-				<div class="col-md-12">
-				<form action="" method="POST">
-					<input name="type" type="number" value="2">
-					<button type="submit" class="btn ref_type_button btn-primary btn-block btn-lg">Brief Reference</button>
-				</form>
+					<form action="." method="POST">
+						<div class="form-group">
+							<label for="count1">Enter Counts</label>
+							<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="enter door count here">
+						</div>
+						<div class="form-group">
+							<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
+							<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm">
+						</div>	
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
 				</div>
 			</div>
-
-			<div class="row-fluid">
-				<div class="col-md-12">
-				<form action="" method="POST">
-					<input name="type" type="number" value="3">
-					<button type="submit" class="btn ref_type_button btn-primary btn-block btn-lg">Extended Reference</button>
-				</form>
-				</div>
-			</div>
-
-			<?php
-				// Populate dropdown with users if Law or Med
-				if ( startsWith($_COOKIE['location'], "MED") ) {
-			?>
-			<div class="row-fluid">
-				<div class="col-md-12">
-				<form action="" method="POST">
-					<input name="type" type="number" value="4">
-					<button type="submit" class="btn ref_type_button btn-primary btn-block btn-lg">Consultation</button>
-				</form>
-				</div>
-			</div> 
-			<?php
-				} //end if MED button
-			?>
-
-			<?php
-				// Populate dropdown with users if Law or Med
-				if ( array_key_exists($_COOKIE['location'], $user_arrays) ) {
-			?>
-				<div class="row-fluid">
-					<div class="col-md-12">
-						<form action="" method="POST">
-							<select class="form-control" id="user_group" name="user_group" onchange="userCookie(this.value)">';
-								<?php makeUserDropdown($_COOKIE['location']); ?>
-							</select>
-						</form>
-					</div>
-				</div>
-
-			<?php
-				} //end if user
-			?>
 
 			<!-- edit buttons -->
 			<div class="row-fluid">
@@ -224,7 +203,7 @@ global $user_arrays;
 		<div id="ref_graph">
 			<div class="row-fluid">	
 				<div class="col-md-12" id="refreport">				
-					<h4 id="toggle_graph">Today's Stats <span style="font-size:50%;">(click to toggle)</span></h4>	
+					<h4 id="toggle_graph">Today's Counts <span style="font-size:50%;">(click to toggle)</span></h4>	
 					<div id="table_wrapper">
 						<table class="table table-striped table-condensed">						
 							<?php						

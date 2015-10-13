@@ -14,17 +14,36 @@ include('../inc/functions.php');
 
 <?php
 if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
-	foreach($_REQUEST AS $key => $value) { $_REQUEST[$key] = mysqli_real_escape_string($link, $value); } 
-	$IP = IPgrabber();
-	if ( isset($_REQUEST['date']) ){
-		$date = date("Y-m-d", strtotime($_REQUEST['date']));
+
+	// check that time block has no value
+	// checks if hour block has transaction					
+	$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
+	$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
+	$total_results = mysqli_num_rows($result);
+
+	if ($total_results > 0){
+		$row = mysqli_fetch_assoc($result);
+		reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
 	}
-	else {
-		$date = date("Y-m-d");
-	}	
-	$insert_date = $date." {$_REQUEST['hour']}";
-	$sql = "INSERT INTO `ref_stats` ( `ref_type` ,  `location` , `user_group`,  `ip`, `timestamp` ) VALUES(  '{$_REQUEST['ref_type']}' ,  '{$_REQUEST['location']}' , '{$_REQUEST['user_group']}' ,  '$IP', '$insert_date'  ) ";
-	$result = mysqli_query($link, $sql) or die(mysqli_error());
+
+	else{
+
+		foreach($_REQUEST AS $key => $value) { $_REQUEST[$key] = mysqli_real_escape_string($link, $value); } 
+		$IP = IPgrabber();
+
+		if ( isset($_POST['date']) ){
+			$date = date("Y-m-d", strtotime($_POST['date']));
+		}
+		else {
+			$date = date("Y-m-d");
+		}	
+		$timestamp = $date . " {$_REQUEST['hour']}";
+		$original_timestamp = date("Y-m-d H:i:s");
+
+		$sql = "INSERT INTO `$default_table_name` ( `gate_number` ,  `location` , `ip`, `timestamp`, `original_timestamp` ) VALUES(  '{$_REQUEST['count1']}' ,  '{$_REQUEST['location']}' , '$IP', '$timestamp', '$original_timestamp' ) ";
+		$result = mysqli_query($link, $sql) or die(mysqli_error());
+
+	
 	?>
 
 		<div class="row">
@@ -35,6 +54,8 @@ if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 		</div>
 
 <?php
+	}
+
 } 
 else {	
 
@@ -47,57 +68,14 @@ else {
 					<!-- location -->
 					<input type="hidden" id="location" name="location" value="<?php echo $_COOKIE['location']; ?>"></input>					
 
-					<!-- if location requires users, show user_group dropdown -->
-					<?php
-					if ( array_key_exists($_COOKIE['location'], $user_arrays) ) {
-					?>
-						<!-- user_group -->
-						<div class="form-group">	
-							<label>Select User Group for this transaction
-							</label>													
-							<select class="form-control" id="user_group" name="user_group">		
-								<?php makeUserDropdown($_COOKIE['location']); ?>						
-							</select>
-						</div>
-					<?php
-					}
-					else{
-						?>
-						<input type="hidden" name="user_group" value="NOPE"/>
-						<?php
-					}
-					?>	
-
+					<!-- add count -->
 					<div class="form-group">
-						<label>Reference Type</label>		
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='1'><span class="btn btn-primary ref_type_button">Directional</span>
-							</label>
-						</div>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='2'><span class="btn btn-primary ref_type_button">Brief Reference</span>
-							</label>
-						</div>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='3'><span class="btn btn-primary ref_type_button">Extended Reference</span>
-							</label>
-						</div>
-						<!-- Shiffman only -->
-						<?php
-							// Populate dropdown with users if Law or Med
-							if ( startsWith($_COOKIE['location'], "MED") ) {
-						?>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='3' <?php if ( $row['ref_type'] == 4) { echo "checked='checked'"; } ?>><span class="btn btn-primary ref_type_button">Extended Reference</span>
-							</label>
-						</div>
-						<?php
-							} //end if MED button
-						?>
+						<label for="count1">Enter New Count</label>
+						<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="enter door count here...">
+					</div>
+					<div class="form-group">
+						<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
+						<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm...">
 					</div>
 
 					<div class="form-group">

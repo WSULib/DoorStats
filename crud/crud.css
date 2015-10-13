@@ -1,3 +1,10 @@
+.alert{
+    border-radius: 10px;
+    background-color: #FFFFC8;
+    padding:10px;
+    text-align:center;
+}
+
 #breadcrumb {
 }
 

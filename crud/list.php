@@ -12,7 +12,7 @@ else {
 
 // establish editing location, or select all
 if (isset($_REQUEST['edit_location']) && $_REQUEST['edit_location'] == "ALL"){
-	$location_where = "location = ANY(select location from ref_stats)";
+	$location_where = "location = ANY(select location FROM $default_table_name)";
 }
 elseif (isset($_REQUEST['edit_location'])) {
 	$location_where = "location = '{$_REQUEST['edit_location']}'";
@@ -23,11 +23,11 @@ elseif (isset($_COOKIE['location']) && $_COOKIE['location'] != "NOPE"){
 }
 else {
 	$_REQUEST['edit_location'] = "ALL";
-	$location_where = "location = ANY(select location from ref_stats)";	
+	$location_where = "location = ANY(select location FROM $default_table_name)";	
 }					
 
 // perform query
-$query = "SELECT id, ref_type, location, user_group, ip, DATE_FORMAT(timestamp, '%r') AS print_timestamp, timestamp AS ordering_timestamp FROM ref_stats WHERE DATE(timestamp) = DATE_ADD(CURDATE(), INTERVAL $page DAY) AND $location_where ORDER BY ordering_timestamp DESC";
+$query = "SELECT id, gate_number, location, ip, DATE_FORMAT(timestamp, '%r') AS print_timestamp, timestamp AS ordering_timestamp FROM $default_table_name WHERE DATE(timestamp) = DATE_ADD(CURDATE(), INTERVAL $page DAY) AND $location_where ORDER BY ordering_timestamp DESC";
 $result = mysqli_query($link, $query) or trigger_error(mysqli_error());
 $total_day_stats = mysqli_num_rows($result);
 $results_date = date('l\, m\-j\-y', strtotime( ($page)." days" ));
@@ -87,7 +87,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 
 				<div id="transactions_total" class="col-md-3">
 					<h4 class="text-center">
-						<?php echo "Location: $current_edit_location<br>$results_date<br>$total_day_stats transactions"; ?>
+						<?php echo "Location: $current_edit_location<br>$results_date<br>$total_day_stats count recorded"; ?>
 					</h4>
 				</div>		
 			
@@ -107,7 +107,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 					<table class="table table-striped">
 						<tr>
 							<td><b>Id</b></td> 
-							<td><b>Ref Type</b></td> 
+							<td><b>Recorded Count</b></td> 
 							<td><b>Location</b></td>
 							<td><b>User Group</b></td> 
 							<td><b>Ip</b></td>
@@ -125,7 +125,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 								}
 								echo "<tr>";  
 								echo "<td>" . nl2br( $row['id']) . "</td>";  
-								echo "<td class='ref_type_{$row['ref_type']}'>" . nl2br( $ref_type_hash[$row['ref_type']]) . "</td>";  
+								echo "<td class='gate_number{$row['gate_number']}'>" . nl2br( number_format($row['gate_number']) ) . "</td>";  
 								echo "<td>" . nl2br( $row['location']) . "</td>";
 								echo "<td>" . nl2br( $row['user_group']) . "</td>";  
 								echo "<td>" . nl2br( $row['ip']) . "</td>";  
@@ -147,7 +147,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 			<!-- graph -->
 			<div id="stats_graph" class="row">	
 				<div class="col-md-12" id="refreport">				
-					<h4 id="toggle_graph">Stats Graph <span style="font-size:50%;">(click to toggle)</span></h4>	
+					<h4 id="toggle_graph">Hourly Breakdown <span style="font-size:50%;">(click to toggle)</span></h4>	
 					<div id="table_wrapper">
 						<table class="table table-striped table-condensed">						
 							<?php						

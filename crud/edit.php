@@ -13,22 +13,24 @@ include('../inc/functions.php');
 <? 
 if (isset($_GET['id']) ) { 
 	$id = (int) $_GET['id']; 
-	if ($_SERVER['REQUEST_METHOD'] == "POST") { 
-		if ( isset($_POST['date']) ){
-			$date = date("Y-m-d", strtotime($_POST['date']));
-		}
-		else {
-			$date = date("Y-m-d");
-		}	
-		$insert_date = $date." {$_REQUEST['hour']}";
-		foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
-		$sql = "UPDATE `ref_stats` SET  `ref_type` =  '{$_POST['ref_type']}' ,  `location` =  '{$_POST['location']}' , `user_group` =  '{$_POST['user_group']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$insert_date'   WHERE `id` = '$id' "; 
-		mysqli_query($link, $sql) or die(mysqli_error());
+	if ($_SERVER['REQUEST_METHOD'] == "POST") {
+		if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {		
 
-		// if coming from index.php, return
-		if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
-			header('Location: ../', true, 302);
-		}
+			if ( isset($_POST['date']) ){
+				$date = date("Y-m-d", strtotime($_POST['date']));
+			}
+			else {
+				$date = date("Y-m-d");
+			}	
+			$timestamp = $date . " {$_REQUEST['hour']}";			
+			foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
+			$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' "; 
+			mysqli_query($link, $sql) or die(mysqli_error());
+
+			// if coming from index.php, return
+			if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
+				header('Location: ../', true, 302);
+			}
 ?>
 
 		<div class="row">
@@ -39,66 +41,34 @@ if (isset($_GET['id']) ) {
 		</div>
 
 <?php
-} 
+	} 
+	else {
+
+	}
+}
 else {	
-	$row = mysqli_fetch_array ( mysqli_query($link, "SELECT * FROM `ref_stats` WHERE `id` = '$id' ")); 
+	$row = mysqli_fetch_array ( mysqli_query($link, "SELECT * FROM `$default_table_name` WHERE `id` = '$id' ")); 
 
 ?>
 
 		<div class="row">
+			<div class="col-md-12">
+				<h4 class="alert"><strong>Previous Count:</strong> <?php echo number_format($row['gate_number']); ?></h4>
+			</div>
+		</div>
+
+		<div class="row">
 			<div class="col-md-6">
-				<form action='' method='POST' class="form" role="form">		
+				<form action='' method='POST' class="form" role="form">
 
-					<?php
-						if ( array_key_exists($_COOKIE['location'], $user_arrays) ) {
-					?>
-						<div class="form-group">
-							<label>Select User Group for this transaction</label>
-							<select class="form-control" id="user_group" name="user_group">
-								<?php makeUserDropdown(False,$row['user_group']); ?>
-							</select>
-						</div>
-					<?php
-						}
-						else{
-							?>
-							<input type="hidden" name="user_group" value="NOPE"/>
-							<?php
-						}
-					?>			
-
+					<!-- edit count -->
 					<div class="form-group">
-						<label>Reference Type:</label>		
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='1' <?php if ( $row['ref_type'] == 1) { echo "checked='checked'"; } ?>><span class="btn btn-primary ref_type_button">Directional</span>
-							</label>
-						</div>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='2' <?php if ( $row['ref_type'] == 2) { echo "checked='checked'"; } ?>><span class="btn btn-primary ref_type_button">Brief Reference</span>
-							</label>
-						</div>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='3' <?php if ( $row['ref_type'] == 3) { echo "checked='checked'"; } ?>><span class="btn btn-primary ref_type_button">Extended Reference</span>
-							</label>
-						</div>
-
-						<!-- Shiffman only -->
-						<?php
-							// Populate dropdown with users if Law or Med
-							if ( startsWith($_COOKIE['location'], "MED") ) {
-						?>
-						<div class='radio'>
-							<label>
-								<input type='radio' name='ref_type' value='3' <?php if ( $row['ref_type'] == 4) { echo "checked='checked'"; } ?>><span class="btn btn-primary ref_type_button">Extended Reference</span>
-							</label>
-						</div>
-						<?php
-							} //end if MED button
-						?>
-						
+						<label for="count1">Enter New Count</label>
+						<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="enter door count here...">
+					</div>
+					<div class="form-group">
+						<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
+						<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm...">
 					</div>
 
 					<!-- location -->

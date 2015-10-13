@@ -37,7 +37,7 @@ include('../inc/password_protect.php');
 	<div id="breadcrumb" class="row">
 		<div class="col-md-12 text-center">
 			<a class="no_dec" href="../.">
-					<img class="refstats_logo" src="../inc/refstats_logo.png"/>
+					<img class="refstats_logo" src="../inc/logo_small.png"/>
 				</a>
 			<p>Current location: <span style="font-size:125%;">
 				<?php 

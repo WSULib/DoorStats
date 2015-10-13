@@ -51,7 +51,7 @@ $LOGIN_INFORMATION = array(
 // Add login/password pairs below, like described above
 // NOTE: all rows except last must have comma "," at the end of line
 $LOGIN_INFORMATION = array(
-  'refstats' => 'statsref'
+  'doorstats' => 'statsdoor'
 );
 
 // request login? true - show login and password boxes, false - password box only
@@ -113,7 +113,7 @@ function showLoginPasswordProtect($error_msg) {
   <div style="width:640px; margin-left:auto; margin-right:auto; text-align:center">
   <form method="post">
   	<!-- <h2>WSU RefStats Tool</h2> -->
-    <img src="inc/refstats_logo.png"/>
+    <img src="inc/logo_small.png"/>
     <h3>Please enter username and password to access this page:</h3>
     <font color="red"><?php echo $error_msg; ?></font><br />
 <?php if (USE_USERNAME) echo 'Username:<br /><input type="input" name="access_login" /><br />Password:<br />'; ?>

@@ -3,6 +3,8 @@
 include(__DIR__."/../config.php"); //imports relative to "inc/functions.php"
 include($_SERVER['DOCUMENT_ROOT'].'inc/dbs/'.$config_file);
 
+
+
 function reporter($color, $msg, $visibility) {
 		echo '<div id="feedback" class="row-fluid" style="color: '.$color.'; visibility:'.$visibility.';">';
 		echo '<div id="msg" class="col-md-12">';
@@ -105,15 +107,17 @@ function makeUserDropdown($please_select=True, $preset) {
 }
 
 // function to report 8am - 11pm table rows showing stats
-function statsGraph($link, $context, $current_edit_location, $graph_date){			
+function statsGraph($link, $context, $current_edit_location, $graph_date){		
+
+	// globalize table name
+	global $default_table_name;	
 
 	// get location
 	$location = $_COOKIE['location'];	
 
-
-	# main index, current time
+	# main index, current time	
 	if ($context == "index") {
-		$query = "SELECT HOUR(timestamp) AS hour, ref_type FROM `ref_stats` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location' ORDER BY ref_type";
+		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";		
 		$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 	
 	}
 
@@ -122,7 +126,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 		if ($current_edit_location != "ALL") {
 			$location_filter = "AND location = '$current_edit_location'";			
 		}		
-		$query = "SELECT HOUR(timestamp) AS hour, ref_type FROM `ref_stats` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter ORDER BY ref_type";				
+		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter";				
 		$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 	
 	}	
 
@@ -146,9 +150,9 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 		23 => array("11pm","")		
 	);			
 
-	// update graph marks for each hour returned
-	while($row = mysqli_fetch_array($result)) {
-		$shown_hours[(int)$row['hour']][1].= "<span class='ref_type_{$row['ref_type']}'>&#9608;</span>"; 		
+	// push counts to graph
+	while($row = mysqli_fetch_array($result)) {		
+		$shown_hours[(int)$row['hour']][1].= "<span class='ref_type_{$row['gate_number']}'>".number_format($row['gate_number'])."</span>"; 		
 	}
 
 	// push to page

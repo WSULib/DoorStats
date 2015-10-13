@@ -8,7 +8,7 @@ include('../inc/functions.php');
 
 <?php
 $id = (int) $_GET['id']; 
-mysqli_query($link, "DELETE FROM `ref_stats` WHERE `id` = '$id' ") ;
+mysqli_query($link, "DELETE FROM `$default_table_name` WHERE `id` = '$id' ") ;
 $result = (mysqli_affected_rows($link))? True : False;
 
 if ($result == True){
