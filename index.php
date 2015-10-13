@@ -152,7 +152,7 @@ global $user_arrays;
 			<div class="row-fluid">
 				<div class="col-md-12">
 					<form action="" method="POST">
-					<label for="location">Select Location</label>
+					<!-- <label for="location">Select Location</label> -->
 					<select class="form-control" id="location" name="location" onchange=this.form.submit()>
 						<?php 
 						makeLocationDropdown(True,$_COOKIE['location']);						
@@ -169,12 +169,12 @@ global $user_arrays;
 				<div class="col-md-12">
 					<form action="." method="POST">
 						<div class="form-group">
-							<label for="count1">Enter Counts</label>
-							<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="enter door count here">
+							<!-- <label for="count1">Enter Counts</label> -->
+							<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="Enter door count here">
 						</div>
 						<div class="form-group">
 							<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
-							<input type="text" class="form-control" name="count2" id="count2" placeholder="re-enter to confirm">
+							<input type="text" class="form-control" name="count2" id="count2" placeholder="Re-enter to confirm">
 						</div>	
 						<button type="submit" class="btn ref_type_button btn-block">Submit</button>
 					</form>

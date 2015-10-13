@@ -132,6 +132,14 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	// prepare results array
 	$shown_hours = array(
+		0 => array("12am",""),
+		1 => array("1am",""),
+		2 => array("2am",""),
+		3 => array("3am",""),
+		4 => array("4am",""),
+		5 => array("5am",""),
+		6 => array("6pm",""),
+		7 => array("7pm",""),
 		8 => array("8am",""),
 		9 => array("9am",""),
 		10 => array("10am",""),
@@ -147,7 +155,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 		20 => array("8pm",""),
 		21 => array("9pm",""),
 		22 => array("10pm",""),
-		23 => array("11pm","")		
+		23 => array("11pm",""),
 	);			
 
 	// push counts to graph
