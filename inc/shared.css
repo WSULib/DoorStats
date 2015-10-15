@@ -1,3 +1,14 @@
+.alert_box{
+    border-radius: 10px;
+    background-color: #FFFFC8;
+    padding:10px;
+    text-align:center;
+}
+
+.alert_color{
+    background-color: #FFFFC8;
+}
+
 /* gradient blue tallies */
 .yellow {
 	color:#FFCC33; 	
@@ -5,6 +16,10 @@
 
 .dark_green {
 	color:#238B8B; 	
+}
+
+.light_green {
+	color:#238B8B;
 }
 
 .black {
@@ -144,8 +159,10 @@
 	margin-bottom:40px;
 }
 
-
-
+/*Graph*/
+.graph_link {
+	color:#238B8B;
+}
 
 
 

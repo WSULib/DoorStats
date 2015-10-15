@@ -117,8 +117,9 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	# main index, current time	
 	if ($context == "index") {
-		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
-		$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 	
+		$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
+		$result = mysqli_query($link, $query) or trigger_error(mysqli_error());
+		$crud_prefix = "crud/";
 	}
 
 	# crud, based on $graph_date
@@ -126,8 +127,9 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 		if ($current_edit_location != "ALL") {
 			$location_filter = "AND location = '$current_edit_location'";			
 		}		
-		$query = "SELECT HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter";				
-		$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 	
+		$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter";				
+		$result = mysqli_query($link, $query) or trigger_error(mysqli_error());
+		$crud_prefix = "";
 	}	
 
 	// prepare results array
@@ -160,13 +162,13 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	// push counts to graph
 	while($row = mysqli_fetch_array($result)) {		
-		$shown_hours[(int)$row['hour']][1].= "<span class='dark_green'>".number_format($row['gate_number'])."</span>"; 		
+		$shown_hours[(int)$row['hour']][1].= "<a class='graph_link' href='".$crud_prefix."edit.php?id={$row['id']}'>".number_format($row['gate_number'])."</a>"; 		
 	}
 
 	// push to page
 	foreach($shown_hours as $hour){
 		echo "<tr>";
-		echo "<td class='time_col'>{$hour[0]}</td>";
+		echo "<td class='gray_green time_col'>{$hour[0]}</td>";
 		echo "<td><strong>{$hour[1]}</strong></td>";
 		echo "</tr>";
 	}

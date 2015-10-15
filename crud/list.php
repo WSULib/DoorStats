@@ -87,7 +87,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 
 				<div id="transactions_total" class="col-md-3">
 					<h4 class="text-center">
-						<?php echo "Location: $current_edit_location<br>$results_date<br>$total_day_stats count recorded"; ?>
+						<?php echo "Location: $current_edit_location<br>$results_date<br>Gate counts recorded today: $total_day_stats"; ?>
 					</h4>
 				</div>		
 			

@@ -46,11 +46,11 @@ if (isset($_GET['id']) ) {
 
 ?>
 
-		<div class="row">
+		<!-- <div class="row">
 			<div class="col-md-12">
 				<h4 class="alert"><strong>Previous Count:</strong> <?php echo number_format($row['gate_number']); ?></h4>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="row">
 			<div class="col-md-6">
@@ -58,19 +58,19 @@ if (isset($_GET['id']) ) {
 
 					<!-- edit count -->
 					<div class="form-group">
-						<label for="count1">Enter New Count</label>
-						<input type="text" class="form-control" id="count1" name="count1" id="count1" placeholder="Enter count here">
+						<label class="alert_color" for="count1">Update Count (previous count has been automatically entered)</label>
+						<input type="text" class="form-control" id="count1" name="count1" id="count1" value="<?php echo $row['gate_number']; ?>">
 					</div>
 					<div class="form-group">
 						<!-- <label for="exampleInputEmail1">Enter Door Counts</label> -->
-						<input type="text" class="form-control" name="count2" id="count2" placeholder="Re-enter to confirm">
+						<input type="text" class="form-control" name="count2" id="count2" value="<?php echo $row['gate_number']; ?>">
 					</div>
 
 					<!-- location -->
 					<input type="hidden" id="location" name="location" value="<?php echo $row['location']; ?>"></input>					
 
 					<div class="form-group">						
-						<label>IP Address (automatically populated, override only if necessary)</label>
+						<label>IP Address (override only if necessary)</label>
 						<input type='text' name='ip' class="form-control" value='<?= stripslashes($row['ip']) ?>'/>
 					</div>	
 

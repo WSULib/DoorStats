@@ -9,7 +9,7 @@ global $user_arrays;
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>RefStats Tool - Wayne State University Libraries</title>
+	<title>DoorStats Tool - Wayne State University Libraries</title>
 	<link rel="icon" href="../../inc/img/favicon.ico" type="image/x-icon" />
 	<!-- jQuery -->
 	<script src="inc/jquery-1.11.1.min.js"></script>
@@ -74,8 +74,9 @@ global $user_arrays;
 				$_SESSION['result'] = "location";				
 				header('Location: ./', true, 302);
 			}	
-				
 
+			// get location
+			$location = $_COOKIE['location'];
 
 			// checks if hour block has transaction					
 			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)=HOUR(NOW()) AND location = '$location'";
@@ -85,15 +86,15 @@ global $user_arrays;
 			// check if count exists for current hour
 			if ($total_results > 0){
 				$row = mysqli_fetch_assoc($result);
-				reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");						
+				reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");
 			}
 			// check if counts submitted are equal and valid
 			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
-				reporter("red", "Error: Counts do not match or are not numbers.", " ");						
+				reporter("red", "Error: Counts do not match or are not numbers.", " ");
 			}	
 			// check location set
 			elseif ($_COOKIE['location'] == 'NOPE') {
-				reporter("red", "Please Set Your Location", " ");		
+				reporter("red", "Please Set Your Location", " ");
 			}							
 			else {	
 
@@ -133,7 +134,7 @@ global $user_arrays;
 				    mysqli_stmt_close($stmt);
 
 				    // redirect to avoid multiple submissions
-				    // header('Location: ./', true, 302);
+				    header('Location: ./', true, 302);
 
 		   		}
 				// if it fails

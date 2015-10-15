@@ -101,7 +101,7 @@ function showLoginPasswordProtect($error_msg) {
 ?>
 <html>
 <head>
-  <title>Please enter password to access this page</title>
+  <title>DoorStats - Login</title>
   <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
   <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 </head>
@@ -121,7 +121,7 @@ function showLoginPasswordProtect($error_msg) {
     <input type="hidden" name="login_refer" /><p></p>
     <input type="submit" name="Submit" value="Submit" />
   </form>
-  <p>If you have any trouble logging into RefStats, please email <a href="mailto:dv5445@wayne.edu">Katrina Rouan</a>.</p>
+  <p>If you have any trouble logging into DoorStats, please contact <a href="mailto:ab5395@wayne.edu">Rod Fiori</a>, <a href="mailto:aj3401@wayne.edu">Matt Wisotsky</a>, or <a href="mailto:dv5445@wayne.edu">Katrina Rouan</a>.</p>
   </div>
 </body>
 </html>
