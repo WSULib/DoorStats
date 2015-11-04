@@ -21,11 +21,11 @@ $default_table_name = "door_stats_dev";
 */
 $location_array = array(
 	"NOPE" => "Please Select Your Door",
-	"PURDY|EAST" => "Purdy East (PK)",
-	"PURDY|WEST" => "Purdy West (PK)",
-	"KRESGE|WEST" => "Kresge West (PK)" ,
-	"UGL|EAST" => "Undergraduate East (UGL)",
-	"UGL|WEST" => "Undergraduate West (UGL)"	
+	"PURDY|ENTRANCE" => "Purdy Entrance (PK)",
+	"PURDY|EXIT" => "Purdy Exit (PK)",
+	"KRESGE|KRESGE" => "Kresge (PK)" ,
+	"UGL|MAIN" => "Undergraduate Main (UGL)",
+	"UGL|ESA" => "Undergraduate Extended Study Area (UGL)"	
 );
 
 // location array used to populate location dropdowns around app
