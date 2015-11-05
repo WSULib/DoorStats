@@ -12,7 +12,7 @@ else {
 
 // establish editing location, or select all
 if (isset($_REQUEST['edit_location']) && $_REQUEST['edit_location'] == "ALL"){
-	$location_where = "location = ANY(select location FROM $default_table_name)";
+	$location_where = "location = ANY(select location FROM $default_table_name)";	
 }
 elseif (isset($_REQUEST['edit_location'])) {
 	$location_where = "location = '{$_REQUEST['edit_location']}'";
@@ -146,6 +146,10 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 				</div>				
 			</div>
 
+			<?php 
+			if ($_REQUEST['edit_location'] != "ALL"){
+			?>
+
 			<!-- graph -->
 			<div id="stats_graph" class="row">	
 				<div class="col-md-12" id="refreport">				
@@ -159,8 +163,23 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 					</div>
 				</div>
 			</div> 
-
 			
+			<?php 
+			}
+			else {
+			?>
+
+			<!-- graph -->
+			<div id="stats_graph" class="row">	
+				<div class="col-md-12" id="refreport">				
+					<p style="text-align:center;"><strong>Note:</strong> Hourly Graph Breakdown is not available for All Locations</p>						
+				</div>
+			</div>	
+
+			<?php 
+			}
+			?>	
+
 
 		<?php
 		}
