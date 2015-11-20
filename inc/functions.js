@@ -132,7 +132,7 @@ function transPerLocation(raw_data, date_start){
             type:"spline"
         },        
         title: {
-            text: "Transactions per Location"
+            text: "Foot Traffic at each Gate"
         },
         xAxis: {
             type: 'datetime'
@@ -326,7 +326,7 @@ function busiestDOW(raw_data){
 			dataPoints.push(0);
 		}
 	}
-	dow_series.push({name:"Transactions",data:dataPoints})
+	dow_series.push({name:"People",data:dataPoints})
 
 	// console.log(dow_series);
 
@@ -345,7 +345,7 @@ function busiestDOW(raw_data){
         yAxis: {
             min: 0,
             title: {
-                text: 'Total Transactions'
+                text: 'People'
             }
         },
         tooltip: {

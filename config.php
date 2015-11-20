@@ -28,6 +28,14 @@ $location_array = array(
 	"UGL|ESA" => "Undergraduate Extended Study Area (UGL)"	
 );
 
+$building_array = array(
+	"PURDY" => "Purdy",
+	"KRESGE" => "Kresge" ,
+	"UGL" => "Undergraduate",
+);
+
+
+
 // location array used to populate location dropdowns around app
 $simple_location_array = array();
 foreach (array_keys($location_array) as $location) {

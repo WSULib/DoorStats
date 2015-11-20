@@ -58,12 +58,12 @@ function makeLocationDropdown($please_select=True, $preset) {
 	}
 }
 
-# function to create location dropdown selections
+# function to create location grid selections
 function makeCheckboxGrid($please_select=True, $preset_array) {	
 	
 	# get location array from config.php
-	global $location_array;
-	$array = $location_array;
+	global $building_array;
+	$array = $building_array;
 
 	if ($please_select == False){
 		unset($array['NOPE']);

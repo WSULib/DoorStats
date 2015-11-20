@@ -7,18 +7,18 @@ $_REQUEST = json_decode($_REQUEST['params'],true);
 
 $selected_locations = array();
 	// default to ALL
-	if ( isset($_REQUEST['locations']) && $_REQUEST['locations'] == array("ALL")){
+	if ( isset($_REQUEST['buildings']) && $_REQUEST['buildings'] == array("ALL")){
 		$location_where = "location = ANY(select location from ref_stats)";
 		$selected_locations = $simple_location_array; // from config.php
 	}
 
-	elseif ( isset($_REQUEST['locations']) ) {
+	elseif ( isset($_REQUEST['buildings']) ) {
 		
 		// prepare SQL clause
-		$location_where = "location IN ('".implode("', '",$_REQUEST['locations'])."')";
+		$location_where = "location IN ('".implode("', '",$_REQUEST['buildings'])."')";
 
 		// // prepare selected_locations
-		foreach($_REQUEST['locations'] as $location){
+		foreach($_REQUEST['buildings'] as $location){
 			if ($location != "NOPE" && $location != "ALL" && $location != "MAIN_CAMPUS"){
 				array_push($selected_locations, $location);
 			}
