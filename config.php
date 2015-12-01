@@ -17,21 +17,20 @@ $default_table_name = "door_stats_dev";
 	When data is inserted into the database, a MySQL trigger fires splitting on the pipe "|" character, using the first part
 	as the building name.
 
-	For example, "PURDY|EAST" will split on the pipe, grabbing "PURDY" as the building name.  The location will remain, "PURDY|EAST"
+	For example, "PK|ENTRANCE" will split on the pipe, grabbing "PK" as the building name.  The location will remain, "PK|ENTRANCE"
 */
 $location_array = array(
 	"NOPE" => "Please Select Your Door",
-	"PURDY|ENTRANCE" => "Purdy Entrance (PK)",
-	"PURDY|EXIT" => "Purdy Exit (PK)",
-	"KRESGE|KRESGE" => "Kresge (PK)" ,
+	"PK|PURDY_ENTRANCE" => "Purdy Entrance (PK)",
+	"PK|PURDY_EXIT" => "Purdy Exit (PK)",
+	"PK|KRESGE" => "Kresge (PK)" ,
 	"UGL|MAIN" => "Undergraduate Main (UGL)",
 	"UGL|ESA" => "Undergraduate Extended Study Area (UGL)"	
 );
 
 $building_array = array(
-	"PURDY" => "Purdy",
-	"KRESGE" => "Kresge" ,
-	"UGL" => "Undergraduate",
+	"PK" => "Purdy/Kresge",
+	"UGL" => "Undergraduate"
 );
 
 

@@ -74,10 +74,10 @@ function makeCheckboxGrid($please_select=True, $preset_array) {
 		$location_exceptions = array("PK1","PK2");
 		if ( !in_array($key, $location_exceptions) ){
 			if ( in_array($key, $preset_array) ){			
-				echo '<li><div class="checkbox"><label><input type="checkbox" onclick="$(\'#ALL_checkbox\').not(this).prop(\'checked\', false);" name="locations[]" value="'.$key.'" checked> '.$value.'</label></div></li>';
+				echo '<li><div class="checkbox"><label><input type="checkbox" onclick="$(\'#ALL_checkbox\').not(this).prop(\'checked\', false);" name="buildings[]" value="'.$key.'" checked> '.$value.'</label></div></li>';
 			}			
 			else {
-				echo '<li><div class="checkbox"><label><input type="checkbox" onclick="$(\'#ALL_checkbox\').not(this).prop(\'checked\', false);" name="locations[]" value="'.$key.'"> '.$value.'</label></div></li>';
+				echo '<li><div class="checkbox"><label><input type="checkbox" onclick="$(\'#ALL_checkbox\').not(this).prop(\'checked\', false);" name="buildings[]" value="'.$key.'"> '.$value.'</label></div></li>';
 			}	
 		}
 	}
@@ -191,6 +191,20 @@ function endsWith($haystack, $needle) {
     return $needle === "" || strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== FALSE;
 }
 
-
+function figure_hours($counts) {
+	$previous_hour = '';
+	$my_array = array();
+	foreach($counts as $building => $dates) {
+		foreach($dates as $date => $hours) {
+			foreach($hours as $hour => $visit) {
+				if ((int)$hour - (int)$previous_hour == 1) {
+					$my_array[$previous_hour] += $visit - $counts[$building][$date][$previous_hour]/2;
+				}
+				$previous_hour = $hour;
+			}
+		}
+	}
+	return $my_array;
+}
 
 ?>

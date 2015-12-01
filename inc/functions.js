@@ -145,26 +145,26 @@ function transPerLocation(raw_data, date_start){
 }
 
 
-// HighCharts - Transaction Breakdown
-function transBreakdown(raw_data){
+// HighCharts - Gate Breakdown
+function gateBreakdown(raw_data){
     
     // format data
-    var trans_breakdown_data = [];
-    for (var trans_type in raw_data) {
-        if (raw_data.hasOwnProperty(trans_type)) {
-            var temp_data = [ trans_type, parseInt(raw_data[trans_type]) ];
-            trans_breakdown_data.push(temp_data);
+    var gate_breakdown_data = [];
+    for (var gate_type in raw_data) {
+        if (raw_data.hasOwnProperty(gate_type)) {
+            var temp_data = [ gate_type, parseInt(raw_data[gate_type]) ];
+            gate_breakdown_data.push(temp_data);
         }
     }
 
-    $('#transBreakdown').highcharts({
+    $('#gateBreakdown').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
             plotShadow: false
         },
         title: {
-            text: 'Transaction Type Breakdown'
+            text: 'Gate Visit Breakdown'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -184,127 +184,64 @@ function transBreakdown(raw_data){
         },
         series: [{
             type: 'pie',
-            name: 'Transaction Breakdown',
-            data: trans_breakdown_data
+            name: 'Gate Breakdown',
+            data: gate_breakdown_data
         }]
     });
 
 
 }
 
-// HighCharts - Busiest Hours
-function busiestHours(raw_data){
 
-	// PREPARE DATA
-	// series are horizontal color segments, in our case reference types
-	var reftype_series = [{
-            name: 'Directional',
-            data: []
-        }, {
-            name: 'Brief',
-            data: []
-        }, {
-            name: 'Extended',
-            data: []
-        },
-        {
-            name: 'Consultation',
-            data: []
+// HighCharts - Building Breakdown
+function buildingBreakdown(raw_data){
+    
+    // format data
+    var building_breakdown_data = [];
+    for (var building_type in raw_data) {
+        if (raw_data.hasOwnProperty(building_type)) {
+            var temp_data = [ building_type, parseInt(raw_data[building_type]) ];
+            building_breakdown_data.push(temp_data);
         }
-    ]
-	var x_axis_hours = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+    }
 
-	// iterate through x axis hours
-	for (var i=0; i < x_axis_hours.length; i++){
-
-		// check if hour data exists
-		if ( raw_data[x_axis_hours[i]] ){
-
-			// loop through series reftypes
-			for (var j=0; j < reftype_series.length; j++){
-				if (raw_data[x_axis_hours[i]][reftype_series[j]['name']]){
-					reftype_series[j]['data'].push( parseInt(raw_data[x_axis_hours[i]][reftype_series[j]['name']]) );	
-				}
-				else {
-					reftype_series[j]['data'].push( 0 );	
-				}
-				
-			}
-
-		}
-
-		// else, fill with zeros
-		else {
-			for (var j=0; j < reftype_series.length; j++){
-				reftype_series[j]['data'].push( 0 );
-			}
-		}
-
-	}
-
-	// render chart
-    $('#busiestHoursChart').highcharts({
+    $('#buildingBreakdown').highcharts({
         chart: {
-            type: 'column'
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
         },
         title: {
-            text: 'Busiest Hours per Day'
-        },
-        xAxis: {
-            categories: x_axis_hours
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Total Transactions'
-            },
-            stackLabels: {
-                enabled: true,
-                style: {
-                    fontWeight: 'bold',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                }
-            }
-        },
-        legend: {
-            align: 'right',
-            x: -30,
-            verticalAlign: 'top',
-            y: 25,
-            floating: true,
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
-            borderColor: '#CCC',
-            borderWidth: 1,
-            shadow: false
+            text: 'Building Visit Breakdown'
         },
         tooltip: {
-            formatter: function () {
-                return '<b>' + this.x + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-            }
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
         plotOptions: {
-            column: {
-                stacking: 'normal',
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                     style: {
-                        textShadow: '0 0 3px black'
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
                 }
             }
         },
-
-        series: reftype_series
-
+        series: [{
+            type: 'pie',
+            name: 'Building Breakdown',
+            data: building_breakdown_data
+        }]
     });
+
 
 }
 
 
-// HighCharts - Busiest Hours
+// HighCharts - Busiest DOW
 function busiestDOW(raw_data){
 
 	// console.log("busiesetDOW raw_data:",raw_data);
@@ -326,7 +263,7 @@ function busiestDOW(raw_data){
 			dataPoints.push(0);
 		}
 	}
-	dow_series.push({name:"People",data:dataPoints})
+	dow_series.push({name:"Visits",data:dataPoints})
 
 	// console.log(dow_series);
 
@@ -345,13 +282,13 @@ function busiestDOW(raw_data){
         yAxis: {
             min: 0,
             title: {
-                text: 'People'
+                text: 'Visits'
             }
         },
         tooltip: {
             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y} transactions</b></td></tr>',
+                '<td style="padding:0"><b>{point.y} visits</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true
@@ -367,7 +304,67 @@ function busiestDOW(raw_data){
 
 }
 
+function busiestHours(raw_data){
 
+    // console.log("busiesetDOW raw_data:",raw_data);
+
+    // PREPARE DATA
+    
+    // simple x axis
+    var x_axis_days = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"];
+
+    // series data
+    dow_series = []
+    dataPoints = []
+    for (var i=0; i < x_axis_days.length; i++){
+        // check if hour data exists
+        if ( raw_data[x_axis_days[i]] ){
+            dataPoints.push( parseFloat(raw_data[x_axis_days[i]]) )
+        }
+        else {
+            dataPoints.push(0);
+        }
+    }
+    dow_series.push({name:"Visits",data:dataPoints})
+
+    // console.log(dow_series);
+
+    // render chart
+    $('#busiestHoursChart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Busiest Hours Per Day'
+        },        
+        xAxis: {
+            categories: x_axis_days,
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Visits'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} visits</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: dow_series
+    });
+
+}
 
 
 

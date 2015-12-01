@@ -7,7 +7,6 @@ if (isset($_REQUEST['submitted'])){
 
 	// establish reporting building, or select all (note: contains 'AND' from actual query to avoid altogether)
 	/* ----------------------------------------------------------------------------------------------------- */
-
 	$selected_buildings = array();
 	// default to ALL
 	if ( isset($_REQUEST['buildings']) && $_REQUEST['buildings'] == array("ALL")){
@@ -21,7 +20,7 @@ if (isset($_REQUEST['submitted'])){
 		    	array_push($selected_buildings, $row['building']);
 			}
 		}		
-	// print_r($selected_buildings);
+
 	}
 
 	elseif ( isset($_REQUEST['buildings']) ) {
@@ -31,7 +30,7 @@ if (isset($_REQUEST['submitted'])){
 
 		// prepare selected_buildings
 		foreach($_REQUEST['buildings'] as $building){
-			if ($location != "NOPE" && $building != "ALL" && $building != "MAIN_CAMPUS"){
+			if ($location != "NOPE" && $building != "ALL"){
 				array_push($selected_buildings, $building);
 			}
 		}
@@ -39,9 +38,11 @@ if (isset($_REQUEST['submitted'])){
 	}
 
 	else {
+
 		$cookie_building_mod = substr($_COOKIE['location'], 0, strpos($_COOKIE['location'], '%7C'));
 		$building_where = "AND building = {$cookie_building_mod}";
-		$selected_buildings = array($_COOKIE['building']);
+		$selected_buildings = array($_COOKIE['buildings']);
+
 	}	
 
 	// finish cleaning $selected_buildings
@@ -55,124 +56,72 @@ if (isset($_REQUEST['submitted'])){
 	// All visits in date range (appropriate for csv export)
 	/* ----------------------------------------------------------------------------------------------------- */
 	$full_query = "SELECT gate_number, location, building, DAYNAME(timestamp) as day_of_week, DATE(timestamp) AS simple_date, timestamp AS ordering_timestamp FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where ORDER BY ordering_timestamp DESC";
-	// echo $full_query;
-
-
 	$full_result = mysqli_query($link, $full_query) or trigger_error(mysqli_error());
 	$all_rows = mysqli_fetch_row($full_result);	
 	
-	// Total amount of visits in date range
-	/* ----------------------------------------------------------------------------------------------------- */
-	$MMarray = array("min", "max");
-	$min = '';
-	$max = '';
-	foreach($MMarray as $type) {
-		$total_query = "SELECT gate_number FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' AND timestamp IN (SELECT $type(timestamp) FROM $default_table_name GROUP BY DATE(timestamp)) $building_where";
-		echo $total_query;
-		$total_result = mysqli_query($link, $total_query) or trigger_error(mysqli_error());
-		$previous_value = 0;
-		if ($total_result){
-			while($row = mysqli_fetch_array($total_result)) {
-				$$type = (int)$row['gate_number'];
-				$$type = $previous_value + $$type;
-				$previous_value = $$type;
-			}
-		}
-	}
-	$total_people = $max - $min;
-	$total_people = $total_people/2;
 
-
-	// Building Counts
+	// Total amount of visits (total)
 	/* ----------------------------------------------------------------------------------------------------- */
-	// $MMarray = array("min", "max");
-	// $min = '';
-	// $max = '';
-	// foreach($MMarray as $type) {
-	// 	$total_query = "SELECT gate_number, building FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' AND timestamp IN (SELECT $type(timestamp) FROM $default_table_name GROUP BY DATE(timestamp))";
-	// 	$total_result = mysqli_query($link, $total_query) or trigger_error(mysqli_error());
-	// 	$previous_value = 0;
-	// 	if ($total_result){
-	// 		while($row = mysqli_fetch_array($total_result)) {
-	// 			$$type = (int)$row['gate_number'];
-	// 			$$type = $previous_value + $$type;
-	// 			$previous_value = $$type;
-	// 		}
-	// 	}
-	// }
-	// $total_people = $max - $min;
-	// $total_people = $total_people/2;
-
-	// Query for Building Totals
-	/* ----------------------------------------------------------------------------------------------------- */
-	// create buildings array for case calls
-	$building_cases = '';
-	foreach($selected_buildings as $building) {
-		$building_cases .= ", COUNT(CASE WHEN building = '$building' THEN DATE(timestamp) END) AS $building";
+	$total_query = "SELECT (MAX(gate_number) - MIN(gate_number))/2 as visits FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY location";
+	// echo $total_query;
+	$total_result = mysqli_query($link, $total_query) or trigger_error(mysqli_error());
+	$total_visits = 0;
+	while($row = mysqli_fetch_assoc($total_result)) {	
+		$total_visits += $row['visits'];
 	}
 
-	$buildings_total_query = "SELECT gate_number, DATE(timestamp) AS date_string FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY DATE(timestamp) ORDER BY date_string DESC";
-	// echo $buildings_total_query;
-	$buildings_total_result = mysqli_query($link, $buildings_total_query) or trigger_error(mysqli_error());
 
-	// create arrays for each building
-	$buildings_total_sorted = array();
-	foreach($selected_buildings as $building) {
-		if (!array_key_exists($building, $buildings_total_sorted)) {
-			$buildings_total_sorted[$building] = array();
-		}
-	}
-
-	// loop through rows
-	while ($row = mysqli_fetch_assoc($buildings_total_result)) {	
-		foreach($selected_buildings as $building) {
-			array_push($buildings_total_sorted[$building], array( $row['date_string'], $row[$building] ) );
-		}
-		
-	}
-	
-
-
-	// Transaction counts
+	// Gate Location counts (gate)
 	/* ----------------------------------------------------------------------------------------------------- */
-	$type_query = "SELECT ref_type, COUNT(ref_type) AS ref_type_count FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY ref_type";
-	// echo $type_query;
-	$type_result = mysqli_query($link, $type_query) or trigger_error(mysqli_error());
-	$type_counts = array();
-	while($row = mysqli_fetch_assoc($type_result)) {		
-		$type_counts[$ref_type_hash[$row['ref_type']]] = $row['ref_type_count'];
+	$gate_query = "SELECT (MAX(gate_number) - MIN(gate_number))/2 as visits, location FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY location";
+	$gate_result = mysqli_query($link, $gate_query) or trigger_error(mysqli_error());
+	$gate_counts = array();
+	while($row = mysqli_fetch_assoc($gate_result)) {	
+		$gate_counts[$row['location']] += $row['visits'];
+	}
+
+
+	// Building counts (building)
+	/* ----------------------------------------------------------------------------------------------------- */
+	$building_query = "SELECT (MAX(gate_number) - MIN(gate_number))/2 as visits, building FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY location";
+	$building_result = mysqli_query($link, $building_query) or trigger_error(mysqli_error());
+	$building_counts = array();
+	while($row = mysqli_fetch_assoc($building_result)) {	
+		$building_counts[$row['building']] += $row['visits'];
 	}
 
 
 	// Busiest Day-of-the-week (dow)
 	/* ----------------------------------------------------------------------------------------------------- */
-	$dow_query = "SELECT DAYNAME(timestamp) AS dow_name, DAYOFWEEK(timestamp) AS dow_index, count(DAYOFWEEK(timestamp)) AS dow_count FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY dow_index ORDER BY dow_index;";
+	$dow_query = "SELECT (MAX(gate_number) - MIN(gate_number))/2 as visits, DAYNAME(timestamp) as dow from $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY location, DATE(timestamp)";
 	$dow_result = mysqli_query($link, $dow_query) or trigger_error(mysqli_error());
 	$dow_counts = array();
-	while($row = mysqli_fetch_assoc($dow_result)) {		
-		$dow_counts[$row['dow_name']] = $row['dow_count'];
+	while($row = mysqli_fetch_assoc($dow_result)) {	
+		$dow_counts[$row['dow']] += $row['visits'];
 	}
+	// ???
+	// Find each Friday for each gate; then find the min and max for that specific gate's Friday....so you'd end up with a Friday for each gate that would contain a difference and then repeat if it's a different Friday (like a week later)
 
-
-	// Busiest Hours
+	// Busiest Hours (hour)
 	/* ----------------------------------------------------------------------------------------------------- */
-	$hour_query = "SELECT HOUR(timestamp) AS hour, COUNT(CASE WHEN ref_type = 1 THEN ref_type END) AS Directional, COUNT(CASE WHEN ref_type = 2 THEN ref_type END) AS Brief, COUNT(CASE WHEN ref_type = 3 THEN ref_type END) AS Extended, COUNT(CASE WHEN ref_type = 4 THEN ref_type END) AS Consultation FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY hour;";
+	// At each gate, select all the hours for each unique day
+	$hour_query = "SELECT gate_number as visits, HOUR(timestamp) as hour, location, DATE(timestamp) as simple_date from $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where";
 	$hour_result = mysqli_query($link, $hour_query) or trigger_error(mysqli_error());
+
+	// Organize them into an array where each day contains the hours and vists (already divided by 2) as key, value pairs
 	$hour_counts = array();
-	while($row = mysqli_fetch_assoc($hour_result)) {		
-		$hour_counts[$row['hour']] = array(
-			"Directional" => $row['Directional'],
-			"Brief" => $row['Brief'],
-			"Extended" => $row['Extended'],
-			"Consultation" => $row['Consultation'],
-		);
+	while($row = mysqli_fetch_assoc($hour_result)) {
+		$location = $row['location'];
+		$hour = $row['hour'];
+		$simple_date = $row['simple_date'];
+		$hour_counts[$location][$simple_date][$hour] = $row['visits'];
+		ksort($hour_counts[$location][$simple_date],SORT_NUMERIC);
 	}
 
+	// Now, iterate through each gate and find the total in an hour by subtracting new hour - old hour. If no new hour, then ignore the old hour..
+	// aka If you have an 8am entry but don't have a 9am entry, then ignore it because you don't know the difference...making it useless
+	$hour_counts = figure_hours($hour_counts);
 
-	// Busiest Single Days
-	/* ----------------------------------------------------------------------------------------------------- */
-	$single_query = "SELECT DAYNAME(timestamp) as dow_name, DATE(timestamp) AS date, count(ref_type) AS ref_count FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' $building_where GROUP BY date ORDER BY ref_count DESC limit 5;";
-	$single_result = mysqli_query($link, $single_query) or trigger_error(mysqli_error());
 
 	/* Data Explanations:
 	Recommended to use json_encode() for each array to use with charts.js
@@ -187,9 +136,9 @@ if (isset($_REQUEST['submitted'])){
 	$trans_result = MySQL result set for counts of transaction types
 	$type_counts = An associative array from ALL buildings - key is type as string, value is count from database
 
-	$dow_counts = Associative array with Day-of-the-Week (dow) names and total visits counts for that day
+	$dow_counts = Associative array with Day-of-the-Week (dow) names and total visits for that day
 
-	$hour_counts = Nested Associative array with hours of the day, and numbers for "Directional", "Brief", "Extended", and "Consultation"
+	$hour_counts = Associative array with hour and total visits for that hour
 
 	$busiest_day_counts 
 	*/
@@ -232,22 +181,7 @@ if (isset($_REQUEST['submitted'])){
 										</label>
 									</div>
 								</li>	
-								<!-- <li>
-									<div class="checkbox">
-										<label>
-											<input id="ALL_checkbox" type="checkbox" name="buildings[]" value="MAIN_CAMPUS" <?php if ( in_array("MAIN_CAMPUS", $_REQUEST['buildings'])) { echo "checked";} ?> > Main Campus 
-										</label>
-									</div>
-								</li> -->
-<!-- 								<li>
-									<div class="checkbox">
-										<label>
-											<input id="ALL_checkbox" type="checkbox" name="buildings[]" value="PK" <?php if ( in_array("PK", $_REQUEST['buildings'])) { echo "checked";} ?> > Purdy/Kresge 
-										</label>
-									</div>
-								</li> -->
 														
-
 								<?php  makeCheckboxGrid(False, $current_report_building_array); ?>
 							</ul>
 						</div>
@@ -292,7 +226,7 @@ if (isset($_REQUEST['submitted'])){
 				<div class="row">
 					<div class="col-md-6">
 						<h3 style="text-align:center;">QuickStats</h3>
-						<p><strong>Total Visits</strong>: <?php echo $total_people; ?></p>
+						<p><strong>Total Visits</strong>: <?php echo $total_visits; ?></p>
 					</div>
 					<div class="col-md-6" style="text-align:center;">
 						<h3>Export Data</h3>				
@@ -308,21 +242,19 @@ if (isset($_REQUEST['submitted'])){
 				<div class="row">
 					
 					<!-- Pie Chart -->
-<!-- 					<div class="col-md-6">
-						<div id="transBreakdown"></div>
-						<script type="text/javascript">
-							transBreakdown(<?php echo json_encode($type_counts); ?>);
-						</script>
-					</div> -->
-
-					<!-- DOW Bar Chart -->
 					<div class="col-md-6">
-						<div id="busiestDOWChart"></div>
+						<div id="gateBreakdown"></div>
 						<script type="text/javascript">
-							busiestDOW(<?php echo json_encode($dow_counts); ?>);
-							console.log("Day of Week");
-							console.log(<?php echo json_encode($dow_counts); ?>);
-						</script>					
+							gateBreakdown(<?php echo json_encode($gate_counts); ?>);
+						</script>
+					</div>
+
+					<!-- Pie Chart -->
+					<div class="col-md-6">
+						<div id="buildingBreakdown"></div>
+						<script type="text/javascript">
+							buildingBreakdown(<?php echo json_encode($building_counts); ?>);
+						</script>
 					</div>
 					
 				</div>
@@ -330,27 +262,49 @@ if (isset($_REQUEST['submitted'])){
 				<hr class="quickstats_dividers">
 
 				<div class="row">
-					<!-- Line Chart -->
+
+					<!-- DOW Bar Chart -->
 					<div class="col-md-6">
-						<div id="transPerLocation"></div>
+						<div id="busiestDOWChart"></div>
 						<script type="text/javascript">
-							transPerLocation(<?php echo json_encode($buildings_total_sorted); ?>,'<?php echo $date_start; ?>');
-							console.log("Foot Traffic at Each Gate");
-							console.log(<?php echo json_encode($buildings_total_sorted); ?>,'<?php echo $date_start; ?>');
-						</script>	
-					</div>			
-					
-					<!-- Hour Bar -->
-<!-- 					<div class="col-md-6">
+							busiestDOW(<?php echo json_encode($dow_counts); ?>);
+						</script>					
+					</div>
+					<!-- Hours Bar Chart -->
+					<div class="col-md-6">
 						<div id="busiestHoursChart"></div>
 						<script type="text/javascript">
 							busiestHours(<?php echo json_encode($hour_counts); ?>);
-						</script>						
-					</div> -->
+						</script>					
+					</div>
 
 			</div>
-		</div>	
+		</div>
+		<div class="test col-md-12"></div>
 
+		<?php 
+			if ($_SERVER['REMOTE_ADDR'] == "141.217.54.89" || $_SERVER['REMOTE_ADDR'] == "141.217.54.91" || $_SERVER['REMOTE_ADDR'] == "141.217.54.97" || $_GET['fullview'] == "true") {
+				echo "<b>SQL for total visits</b>";
+	 			echo "<br/>";
+	 			echo $total_query;
+	 			echo "<br/>";
+				echo "<b>SQL for building visit breakdown</b>";
+	 			echo "<br/>";
+	 			echo $building_query;
+	 			echo "<br/>";				
+				echo "<b>SQL for hourly visit breakdown</b>";
+	 			echo "<br/>";
+	 			echo $hour_query;
+	 			echo "<br/>";
+				echo "<b>SQL for day of the week visit breakdown</b>";
+	 			echo "<br/>";
+	 			echo $dow_query;
+	 			echo "<br/>";
+				echo "<b>SQL for gate visit breakdown</b>";
+	 			echo "<br/>";
+	 			echo $gate_query;
+			}
+		?>
 		<div class="row">
 			<div class="col-md-12 spacer40"></div>
 		</div>
