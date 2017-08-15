@@ -199,7 +199,14 @@ if (isset($_REQUEST['submitted'])){
 								<li>
 									<div class="checkbox">
 										<label>
-											<input id="ALL_checkbox" type="checkbox" name="locations[]" value="PK" <?php if ( in_array("PK", $_REQUEST['locations'])) { echo "checked";} ?> > Purdy/Kresge 
+											<input id="PK_checkbox" type="checkbox" name="locations[]" value="PK" <?php if ( in_array("PK", $_REQUEST['locations'])) { echo "checked";} ?> > Purdy/Kresge (building)
+										</label>
+									</div>
+								</li>
+								<li>
+									<div class="checkbox">
+										<label>
+											<input id="UGL_checkbox" type="checkbox" name="locations[]" value="UGL" <?php if ( in_array("UGL", $_REQUEST['locations'])) { echo "checked";} ?> > UGL (building) 
 										</label>
 									</div>
 								</li>
