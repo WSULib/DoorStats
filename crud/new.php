@@ -8,14 +8,14 @@ include('../inc/functions.php');
 
 		<div class="row">
 			<div class="col-md-12">
-				<h2>Add Transaction</h2>
+				<h2>Add Count</h2>
 			</div>
 		</div>
 
 <?php
 if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 
-	// checks if hour block has transaction					
+	// checks if hour block has count					
 	$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
 	$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
 	$total_results = mysqli_num_rows($result);

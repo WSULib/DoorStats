@@ -40,8 +40,8 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 		?>
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Add Transaction</h3>				
-					<a class="btn btn-WSUgreen" href="./new.php">New Transaction</a></p>	
+					<h3>Add Count</h3>				
+					<a class="btn btn-WSUgreen" href="./new.php">New Count</a></p>	
 				</div>				
 			</div>		
 		<?php
@@ -51,14 +51,14 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 		<div class="row">
 
 			<div class="col-md-12">
-				<h3>Edit Transactions</h3>				
+				<h3>Edit Count</h3>				
 				<div class="col-md-3">					
 					<form action="./list.php" method="GET">	
 						<div class="form-group">		
 							<label>What location would you like to view? </label>														
 							<select class="form-control" id="edit_location" name="edit_location" onchange='this.form.submit()'>
 								<?php
-								// select transactions from dropdown, or default to current tool location
+								// select count from dropdown, or default to current tool location
 								if (isset($_REQUEST['edit_location'])) {									
 									$current_edit_location = $_REQUEST['edit_location'];
 								}
@@ -140,7 +140,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 					</table>				
 					<?php	
 					if ($total_day_stats == 0) {			
-						echo "<h4 style='text-align:center;'>No transactions recorded for this day.</h4>";
+						echo "<h4 style='text-align:center;'>No counts recorded for this day.</h4>";
 					}
 					?>	
 				</div>				
