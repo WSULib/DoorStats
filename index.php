@@ -91,6 +91,10 @@ global $user_arrays;
 			// check if counts submitted are equal and valid
 			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
 				reporter("red", "Error: Counts do not match or are not numbers.", " ");
+			}
+			// check that count does not exceed 999,999
+			elseif ($_POST['count1'] > 999999 || $_POST['count2'] > 999999) {
+				reporter("red", "Error: Count cannot exceed 999,999.", " ");
 			}	
 			// check location set
 			elseif ($_COOKIE['location'] == 'NOPE') {

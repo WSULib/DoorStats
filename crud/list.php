@@ -147,6 +147,9 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 			</div>
 
 			<!-- graph -->
+			<?php 
+				if ($current_edit_location != 'ALL'){
+			?>					
 			<div id="stats_graph" class="row">	
 				<div class="col-md-12" id="refreport">				
 					<h4 id="toggle_graph">Hourly Breakdown <span style="font-size:50%;">(click to toggle)</span></h4>	
@@ -158,9 +161,10 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 						</table>
 					</div>
 				</div>
-			</div> 
-
-			
+			</div>
+			<?php
+				} //close else block
+			?>
 
 		<?php
 		}
@@ -168,7 +172,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 		?>
 		<div id="no_trans" class="row">
 			<div class="col-md-12">
-				<h4>No transactions recorded for this day.</h4>
+				<h4>No counts recorded for this day.</h4>
 			</div>
 		</div>
 		<?php
