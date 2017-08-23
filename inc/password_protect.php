@@ -163,32 +163,27 @@ if (isset($_POST['access_password'])) {
 // renders page
 else {
 
-
-  if ( !in_array($_SERVER['REMOTE_ADDR'], $ip_white_list) ){
-  	// check if password cookie is set
-	  if (!isset($_COOKIE['verify'])) {
-	    showLoginPasswordProtect("");
-	  }
-
-	  // check if cookie is good
-	  $found = false;
-	  foreach($LOGIN_INFORMATION as $key=>$val) {
-	    $lp = (USE_USERNAME ? $key : '') .'%'.$val;
-	    if ($_COOKIE['verify'] == md5($lp)) {
-	      $found = true;
-	      // prolong timeout
-	      if (TIMEOUT_CHECK_ACTIVITY) {
-	        setcookie("verify", md5($lp), $timeout, '/');
-	      }
-	      break;
-	    }
-	  }  
-	  if (!$found) {
-	    showLoginPasswordProtect("");
-	  }	
+	// check if password cookie is set
+  if (!isset($_COOKIE['verify'])) {
+    showLoginPasswordProtect("");
   }
 
-  
+  // check if cookie is good
+  $found = false;
+  foreach($LOGIN_INFORMATION as $key=>$val) {
+    $lp = (USE_USERNAME ? $key : '') .'%'.$val;
+    if ($_COOKIE['verify'] == md5($lp)) {
+      $found = true;
+      // prolong timeout
+      if (TIMEOUT_CHECK_ACTIVITY) {
+        setcookie("verify", md5($lp), $timeout, '/');
+      }
+      break;
+    }
+  }  
+  if (!$found) {
+    showLoginPasswordProtect("");
+  }	
 
 }
 

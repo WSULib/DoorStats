@@ -54,7 +54,6 @@ include('../inc/password_protect.php');
 				<a class="btn btn-WSUgreen" href="../"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Main Page</a>
 				<a class="btn btn-WSUgreen" href="./list.php"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Manage</a>
 				<a class="btn btn-WSUgreen" href="./reports.php"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Reports</a>
-				<a class="btn btn-WSUgreen" href="javascript: (function(){window.open('http://library.wayne.edu/forms/ref_stats/index.php','ref_stats','menubar=0,resizable=1,scrollbars=yes,width=350,height=880')})();" alt="Drag this button to your bookmarks to have a handy 'bookmarklet' for RefStats!" title="Drag this button to your bookmarks to have a handy 'bookmarklet' for RefStats!"> <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> RefStats Bookmark</a>
 			</p>			
 		</div>
 	</div>
