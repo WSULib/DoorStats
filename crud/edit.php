@@ -6,7 +6,7 @@ include('../inc/functions.php');
 
 		<div class="row">
 			<div class="col-md-12">
-				<h2>Edit Transaction</h2>				
+				<h2>Edit Count</h2>				
 			</div>
 		</div>
 		

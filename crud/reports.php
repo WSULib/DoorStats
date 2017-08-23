@@ -182,28 +182,21 @@ if (isset($_REQUEST['submitted'])){
 									}
 								?>
 
-								<li>
-									<div class="checkbox">
-										<label>
-											<input id="ALL_checkbox" type="checkbox" name="locations[]" onclick="$('input').not(this).prop('checked', false);" value="ALL" <?php if ($_REQUEST['locations'] == array("ALL")) { echo "checked";} ?> > All 
-										</label>
-									</div>
-								</li>	
+								<!-- commenting out building aggregation for now -->
 								<!-- <li>
 									<div class="checkbox">
 										<label>
-											<input id="ALL_checkbox" type="checkbox" name="locations[]" value="MAIN_CAMPUS" <?php if ( in_array("MAIN_CAMPUS", $_REQUEST['locations'])) { echo "checked";} ?> > Main Campus 
-										</label>
-									</div>
-								</li> -->
-								<li>
-									<div class="checkbox">
-										<label>
-											<input id="ALL_checkbox" type="checkbox" name="locations[]" value="PK" <?php if ( in_array("PK", $_REQUEST['locations'])) { echo "checked";} ?> > Purdy/Kresge 
+											<input id="PK_checkbox" type="checkbox" name="locations[]" value="PK" <?php if ( in_array("PK", $_REQUEST['locations'])) { echo "checked";} ?> > Purdy/Kresge (building)
 										</label>
 									</div>
 								</li>
-														
+								<li>
+									<div class="checkbox">
+										<label>
+											<input id="UGL_checkbox" type="checkbox" name="locations[]" value="UGL" <?php if ( in_array("UGL", $_REQUEST['locations'])) { echo "checked";} ?> > UGL (building) 
+										</label>
+									</div>
+								</li> -->
 
 								<?php  makeCheckboxGrid(False, $current_report_location_array); ?>
 							</ul>
@@ -243,11 +236,19 @@ if (isset($_REQUEST['submitted'])){
 
 		<!-- QuickStats -->
 		<div id="quickstats" class="row" style="display:<?php echo $quickstats_display; ?>">
+
 			<div id="stats_results" class="col-md-12">
 
-				<!-- top row -->
+				<!-- row 1 -->
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-12" style="text-align:center;">
+						<h3>Export Data</h3>				
+						<form action="export_csv.php" method="POST">
+							<input type="hidden" name="params" value='<?php echo json_encode($_REQUEST);?>'/>
+							<button id="csv_button" type="submit" class="btn btn-WSUgreen" onclick="loadingCSV('Working...','Download as CSV');">Download as Spreadsheet (.csv)</button>
+						</form>
+					</div>
+					<div class="col-md-6" style="display:none;">
 						<h3 style="text-align:center;">QuickStats</h3>
 						<p><strong>Total Transaction</strong>: <?php echo $total_date_range_results; ?></p>
 						<p><strong>Transactions Types:</strong>
@@ -259,18 +260,12 @@ if (isset($_REQUEST['submitted'])){
 								?>
 							</ul>
 					</div>
-					<div class="col-md-6" style="text-align:center;">
-						<h3>Export Data</h3>				
-						<form action="export_csv.php" method="POST">
-							<input type="hidden" name="params" value='<?php echo json_encode($_REQUEST);?>'/>
-							<button id="csv_button" type="submit" class="btn btn-WSUgreen" onclick="loadingCSV('Working...','Download as CSV');">Download as Spreadsheet (.csv)</button>
-						</form>
-					</div>
 				</div>
 
-				<hr class="quickstats_dividers">
+				<!-- <hr class="quickstats_dividers"> -->
 
-				<div class="row">
+				<!-- row 2 -->
+				<div class="row" style="display:none;">
 					
 					<!-- Pie Chart -->
 					<div class="col-md-6">
@@ -290,9 +285,10 @@ if (isset($_REQUEST['submitted'])){
 					
 				</div>
 
-				<hr class="quickstats_dividers">
+				<!-- <hr class="quickstats_dividers"> -->
 
-				<div class="row">
+				<!-- row 3 -->
+				<div class="row" style="display:none;">
 					<!-- Line Chart -->
 					<div class="col-md-6">
 						<div id="transPerLocation"></div>

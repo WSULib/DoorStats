@@ -1,15 +1,15 @@
 <?php
 
 /*
-	configuration file for RefStats
-	Production - updated 11/19/2014
+	configuration file for DoorStats
+	updated 08/15/2017
 */
 
 // location is in 'inc/dbs/'
 $config_file = "door_stats_config.php";
 
 // primary table name
-$default_table_name = "door_stats_dev";
+$default_table_name = "door_stats_dev"; //remove _dev for production
 
 // location array used to populate location dropdowns around app
 /*
@@ -21,11 +21,14 @@ $default_table_name = "door_stats_dev";
 */
 $location_array = array(
 	"NOPE" => "Please Select Your Door",
-	"PURDY|EAST" => "Purdy East (PK)",
-	"PURDY|WEST" => "Purdy West (PK)",
-	"KRESGE|WEST" => "Kresge West (PK)" ,
-	"UGL|EAST" => "Undergraduate East (UGL)",
-	"UGL|WEST" => "Undergraduate West (UGL)"	
+	"PK|GATE1" => "Purdy (Gate 1)",
+	"PK|GATE2" => "Purdy (Gate 2)",
+	"PK|KRESGE" => "Kresge" ,
+	"UGL|MAIN" => "UGL Main",
+	"UGL|OVERNIGHT" => "UGL Overnight",
+	"NEEF" => "Arthur Neef Law Library",	
+	"SHIFFMAN" => "Shiffman Medical Library",	
+	"PHARMACY" => "Pharmacy LRC",	
 );
 
 // location array used to populate location dropdowns around app
@@ -68,6 +71,5 @@ $ip_white_list = array(
 	"35.16.92.182",
 	"50.249.166.130"
 );
-
 
 ?>

@@ -48,7 +48,7 @@ global $user_arrays;
 		// if get
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 			if (isset($_SESSION['result']) && $_SESSION['result'] == "success") {								
-				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>".number_format($_SESSION['gate_count_string']).", recorded for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
+				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Count <strong>".number_format($_SESSION['gate_count_string'])."</strong>, recorded for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
 			}
 			elseif (isset($_SESSION['result']) && $_SESSION['result'] == "fail") {
 				reporter("red", "Error: Submission Failed", " ");
@@ -91,6 +91,10 @@ global $user_arrays;
 			// check if counts submitted are equal and valid
 			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
 				reporter("red", "Error: Counts do not match or are not numbers.", " ");
+			}
+			// check that count does not exceed 999,999
+			elseif ($_POST['count1'] > 999999 || $_POST['count2'] > 999999) {
+				reporter("red", "Error: Count cannot exceed 999,999.", " ");
 			}	
 			// check location set
 			elseif ($_COOKIE['location'] == 'NOPE') {
@@ -189,7 +193,7 @@ global $user_arrays;
 					<p>
 						<a href="crud/list.php"><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Manage</button></a>
 						<a href="#" onclick="window.open('./index.php','ref_stats','menubar=0,resizable=0,width=350,height=880');"><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Launch Pop-Up</button></a>
-						<a href="RefStats_Tool_Documentation.html" ><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button></a>
+						<a href="" ><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button></a>
 					</p>
 				</div>
 			</div>
