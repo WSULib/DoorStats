@@ -79,7 +79,7 @@ global $user_arrays;
 			$location = $_COOKIE['location'];
 
 			// checks if hour block has transaction					
-			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)=HOUR(NOW()) AND location = '$location'";
+			$query = "SELECT id, DATE(timestamp) as date, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE hour=HOUR(NOW()) AND date=Date(NOW()) AND location = '$location'";
 			$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
 			$total_results = mysqli_num_rows($result);
 

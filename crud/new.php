@@ -81,7 +81,7 @@ else {
 						<select class="form-control" id="hour" name="hour">
 							<?php
 							$current_hour = date("H");							
-							$hour = 8;							
+							$hour = 0;							
 
 							while ($hour < 24) {								
 								$startHour = date("g a", strtotime("$hour:00"));

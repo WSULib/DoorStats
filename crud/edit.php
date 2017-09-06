@@ -82,7 +82,7 @@ if (isset($_GET['id']) ) {
 							// derive previous hour							
 							$timestamp_linux = strtotime($row['timestamp']);
 							$timestamp_hour = date("H",$timestamp_linux);
-							$hour = 8;							
+							$hour = 0;							
 
 							while ($hour < 24) {								
 								$startHour = date("g a", strtotime("$hour:00"));

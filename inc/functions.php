@@ -106,7 +106,7 @@ function makeUserDropdown($please_select=True, $preset) {
 
 }
 
-// function to report 8am - 11pm table rows showing stats
+// function to report 12am - 11pm table rows showing counts
 function statsGraph($link, $context, $current_edit_location, $graph_date){		
 
 	// globalize table name
@@ -117,7 +117,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 
 	# main index, current time	
 	if ($context == "index") {
-		$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
+		$query = "SELECT id, DATE(timestamp) as date, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND location = '$location'";
 		$result = mysqli_query($link, $query) or trigger_error(mysqli_error());
 		$crud_prefix = "crud/";
 	}
@@ -127,7 +127,7 @@ function statsGraph($link, $context, $current_edit_location, $graph_date){
 		if ($current_edit_location != "ALL") {
 			$location_filter = "AND location = '$current_edit_location'";			
 		}		
-		$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter";				
+		$query = "SELECT id, DATE(timestamp) as date, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE_FORMAT(timestamp, '%m %d %Y') = '$graph_date' $location_filter";				
 		$result = mysqli_query($link, $query) or trigger_error(mysqli_error());
 		$crud_prefix = "";
 	}	
