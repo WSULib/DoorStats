@@ -23,7 +23,7 @@ if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 	// check if count exists for current hour
 	if ($total_results > 0){
 		$row = mysqli_fetch_assoc($result);
-		reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
+		reporter("red", "Error: Count already recorded for this hour, please select a different hour block.", " ");						
 	}
 
 	// check if counts submitted are equal and valid
