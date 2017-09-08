@@ -14,27 +14,46 @@ include('../inc/functions.php');
 if (isset($_GET['id']) ) { 
 	$id = (int) $_GET['id']; 
 	if ($_SERVER['REQUEST_METHOD'] == "POST") {
-		if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {		
+		if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {
 
-			if ( isset($_POST['date']) ){
-				$date = date("Y-m-d", strtotime($_POST['date']));
+			// checks if hour block has count					
+			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
+			$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
+			$total_results = mysqli_num_rows($result);
+
+			// check if count exists for current hour
+			if ($total_results > 0){
+				$row = mysqli_fetch_assoc($result);
+				reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id={$row['id']}'>edit</a>", " ");						
 			}
+
+			// check if counts submitted are equal and valid
+			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
+				reporter("red", "Error: Counts do not match or are not numbers.  <a href='list.php'>Back to gate count management.</a>  ", " ");						
+			}
+
 			else {
-				$date = date("Y-m-d");
-			}	
-			$timestamp = $date . " {$_REQUEST['hour']}";			
-			foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
-			$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' ";			
-			mysqli_query($link, $sql) or die(mysqli_error());
+
+				if ( isset($_POST['date']) ){
+					$date = date("Y-m-d", strtotime($_POST['date']));
+				}
+				else {
+					$date = date("Y-m-d");
+				}	
+				$timestamp = $date . " {$_REQUEST['hour']}";			
+				foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
+				$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' ";			
+				mysqli_query($link, $sql) or die(mysqli_error());
 
 
-			// if coming from index.php, return
-			if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
-				header('Location: ../', true, 302);
+				// if coming from index.php, return
+				if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
+					header('Location: ../', true, 302);
+				}
+
+				// report success
+				reporter("green", "<div class='row'><div class='col-md-6'>Gate count edited. <a href='list.php'>Back to gate count management.</a>", " ");
 			}
-
-			// report success
-			reporter("green", "<div class='row'><div class='col-md-6'>Gate count edited. <a href='list.php'>Back to gate count management.</a>", " ");
 
 		} 
 		else {
