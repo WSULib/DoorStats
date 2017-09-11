@@ -40,7 +40,7 @@ include('../inc/password_protect.php');
 			<a class="no_dec" href="../.">
 					<img class="refstats_logo" src="../inc/logo_small.png"/>
 				</a>
-			<p>Current location: <span style="font-size:125%;">
+			<p>Current location: <span style="font-size:125%;" class="alert_color">
 				<?php 
 					if ($_COOKIE['location'] != "NOPE"){
 						echo $_COOKIE['location']; 

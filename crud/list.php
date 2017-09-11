@@ -51,7 +51,6 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 		<div class="row">
 
 			<div class="col-md-12">
-				<h3>Edit Count</h3>				
 				<div class="col-md-3">					
 					<form action="./list.php" method="GET">	
 						<div class="form-group">		
@@ -132,7 +131,7 @@ $graph_date = date('m d Y', strtotime( ($page)." days" ));
 								echo "<td>" . nl2br( $row['ip']) . "</td>";  
 								echo "<td>" . nl2br( $row['hour_block']) . "</td>";
 								echo "<td>" . nl2br( $row['original_timestamp']) . "</td>";  
-								echo "<td><a href=edit.php?id={$row['id']}>Edit</a> / <a href=delete.php?id={$row['id']}>Delete</a></td> "; 
+								echo "<td><a href=edit.php?id={$row['id']}>Edit Count</a> / <a href=delete.php?id={$row['id']}>Delete</a></td> "; 
 								echo "</tr>"; 
 							}	
 						}

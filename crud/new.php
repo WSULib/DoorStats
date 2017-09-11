@@ -15,8 +15,9 @@ include('../inc/functions.php');
 <?php
 if (isset($_REQUEST['submitted']) & $_REQUEST['location'] != "NOPE") {
 
-	// checks if hour block has count					
-	$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
+	// checks if hour block has count
+	$date = date("Y-m-d", strtotime($_POST['date']));
+	$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)='$date' AND HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
 	$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
 	$total_results = mysqli_num_rows($result);
 

@@ -16,35 +16,16 @@ if (isset($_GET['id']) ) {
 	if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		if ($_POST['count1'] == $_POST['count2'] && is_numeric($_POST['count1']) && is_numeric($_POST['count2'])) {
 
-			// checks if hour block has count					
-			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE HOUR(timestamp)={$_REQUEST['hour']} AND location = '{$_REQUEST['location']}'";
-			$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
-			$total_results = mysqli_num_rows($result);
-
-			// check if count exists for current hour
-			if ($total_results > 0){
-				$row = mysqli_fetch_assoc($result);
-				reporter("red", "Error: Count already recorded for this hour, please <a href='edit.php?id=$id'>edit</a>", " ");						
-			}
-
 			// check if counts submitted are equal and valid
-			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
+			if ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
 				reporter("red", "Error: Counts do not match or are not numbers.  <a href='list.php'>Back to gate count management.</a>  ", " ");						
 			}
 
 			else {
 
-				if ( isset($_POST['date']) ){
-					$date = date("Y-m-d", strtotime($_POST['date']));
-				}
-				else {
-					$date = date("Y-m-d");
-				}	
-				$timestamp = $date . " {$_REQUEST['hour']}";			
 				foreach($_POST AS $key => $value) { $_POST[$key] = mysqli_real_escape_string($link, $value); } 
-				$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' ,  `location` =  '{$_POST['location']}' , `ip` =  '{$_POST['ip']}' ,  `timestamp` =  '$timestamp'   WHERE `id` = '$id' ";			
+				$sql = "UPDATE `$default_table_name` SET  `gate_number` =  '{$_POST['count1']}' WHERE `id` = '$id' ";			
 				mysqli_query($link, $sql) or die(mysqli_error());
-
 
 				// if coming from index.php, return
 				if (isset($_REQUEST['origin']) && $_REQUEST['origin'] == 'index' ){
@@ -65,12 +46,6 @@ if (isset($_GET['id']) ) {
 
 ?>
 
-		<!-- <div class="row">
-			<div class="col-md-12">
-				<h4 class="alert"><strong>Previous Count:</strong> <?php echo number_format($row['gate_number']); ?></h4>
-			</div>
-		</div> -->
-
 		<div class="row">
 			<div class="col-md-6">
 				<form action='' method='POST' class="form" role="form">
@@ -85,52 +60,8 @@ if (isset($_GET['id']) ) {
 						<input type="text" class="form-control" name="count2" id="count2" value="<?php echo $row['gate_number']; ?>">
 					</div>
 
-					<!-- location -->
-					<input type="hidden" id="location" name="location" value="<?php echo $row['location']; ?>"></input>					
-
-					<div class="form-group">						
-						<label>IP Address (override only if necessary)</label>
-						<input type='text' name='ip' class="form-control" value='<?= stripslashes($row['ip']) ?>'/>
-					</div>	
-
-					<div class="form-group">
-						<label>Time (hour window)</label>						
-						<select class="form-control" id="hour" name="hour">
-							<?php
-
-							// derive previous hour							
-							$timestamp_linux = strtotime($row['timestamp']);
-							$timestamp_hour = date("H",$timestamp_linux);
-							$hour = 0;							
-
-							while ($hour < 24) {								
-								$startHour = date("g a", strtotime("$hour:00"));
-								$endHour = date("g a", strtotime(($hour+1).":00"));
-
-								if ($timestamp_hour != $hour){
-									echo "<option id='hour_$hour' value='$hour'>$startHour - $endHour</option>";	
-								}
-								else {
-									// mark selected hour
-									echo "<option id='hour_$hour' value='$hour' selected>$startHour - $endHour</option>";									
-								}
-								$hour ++;
-							}
-							?>
-						</select>
-					</div>
-
-					<div class="form-group">
-						<label>Date</label>
-						<input type="hidden" id="date" name="date">
-						<div id="datepicker"></div>
-						<script>
-							$(function() {
-								$( "#datepicker" ).datepicker(({altField: "#date"}));
-							});
-						</script>
-					</div>
-
+					<!-- count id -->
+					<input type="hidden" id="count_id" name="count_id" value="<?php echo $row['id']; ?>"></input>					
 
 					<button type="submit" class="btn btn-default">Submit</button> 
 				</form>
