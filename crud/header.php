@@ -54,6 +54,7 @@ include('../inc/password_protect.php');
 				<a class="btn btn-WSUgreen" href="../"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Main Page</a>
 				<a class="btn btn-WSUgreen" href="./list.php"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Manage</a>
 				<a class="btn btn-WSUgreen" href="./reports.php"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Reports</a>
+				<a class="btn btn-WSUgreen" href="../index.php?logout=True"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></a>
 			</p>			
 		</div>
 	</div>

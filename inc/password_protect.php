@@ -86,7 +86,7 @@ $timeout = (TIMEOUT_MINUTES == 0 ? 0 : time() + TIMEOUT_MINUTES * 60);
 
 // logout?
 if(isset($_GET['logout'])) {
-  setcookie("verify", '', $timeout, '/'); // clear password;
+  setcookie("door_stats", '', $timeout, '/'); // clear password;
   header('Location: ' . LOGOUT_URL);
   exit();
 }
@@ -121,7 +121,7 @@ function showLoginPasswordProtect($error_msg) {
     <input type="hidden" name="login_refer" /><p></p>
     <input type="submit" name="Submit" value="Submit" />
   </form>
-  <p>If you have any trouble logging into DoorStats, please contact <a href="mailto:ab5395@wayne.edu">Rod Fiori</a>, <a href="mailto:aj3401@wayne.edu">Matt Wisotsky</a>, or <a href="mailto:dv5445@wayne.edu">Katrina Rouan</a>.</p>
+  <p>If you have any trouble logging into DoorStats, please contact <a href="mailto:ab5395@wayne.edu">Rod Fiori</a> or <a href="mailto:aj3401@wayne.edu">Matt Wisotsky</a>.</p>
   </div>
 </body>
 </html>
@@ -131,11 +131,6 @@ function showLoginPasswordProtect($error_msg) {
   die();
 }
 }
-
-// else {
-// 	// redirect to page that 
-// 	echo "Let's go here: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-// }
 
 // user provided password
 if (isset($_POST['access_password'])) {
@@ -149,7 +144,7 @@ if (isset($_POST['access_password'])) {
   }
   else {
     // set cookie if password was validated
-    setcookie("verify", md5($login.'%'.$pass), $timeout, '/');
+    setcookie("door_stats", md5($login.'%'.$pass), $timeout, '/');
     
     // Some programs (like Form1 Bilder) check $_POST array to see if parameters passed
     // So need to clear password protector variables
@@ -164,7 +159,7 @@ if (isset($_POST['access_password'])) {
 else {
 
 	// check if password cookie is set
-  if (!isset($_COOKIE['verify'])) {
+  if (!isset($_COOKIE['door_stats'])) {
     showLoginPasswordProtect("");
   }
 
@@ -172,11 +167,11 @@ else {
   $found = false;
   foreach($LOGIN_INFORMATION as $key=>$val) {
     $lp = (USE_USERNAME ? $key : '') .'%'.$val;
-    if ($_COOKIE['verify'] == md5($lp)) {
+    if ($_COOKIE['door_stats'] == md5($lp)) {
       $found = true;
       // prolong timeout
       if (TIMEOUT_CHECK_ACTIVITY) {
-        setcookie("verify", md5($lp), $timeout, '/');
+        setcookie("door_stats", md5($lp), $timeout, '/');
       }
       break;
     }

@@ -192,6 +192,7 @@ global $user_arrays;
 				<div class="col-md-12">
 					<p>
 						<a href="crud/list.php"><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Manage</button></a>
+						<a href="index.php?logout=True"><button type="button" class="btn btn-sm btn-WSUgreen"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</button></a>
 					</p>
 				</div>
 			</div>
