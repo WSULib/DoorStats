@@ -47,8 +47,9 @@ global $user_arrays;
 
 		// if get
 		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-			if (isset($_SESSION['result']) && $_SESSION['result'] == "success") {								
-				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Count <strong>".number_format($_SESSION['gate_count_string'])."</strong>, recorded for ".date("Ha")."-".date((date("H") + 1)."a")."</a>");
+			if (isset($_SESSION['result']) && $_SESSION['result'] == "success") {
+				$current_hour_block = date('H');
+				reporter("green", "<a style='color:green;'href='crud/edit.php?id={$_SESSION['last_trans_id']}&origin=index'>Count <strong>".number_format($_SESSION['gate_count_string'])."</strong>, recorded for {$hour_blocks[$current_hour_block]}</a>");
 			}
 			elseif (isset($_SESSION['result']) && $_SESSION['result'] == "fail") {
 				reporter("red", "Error: Submission Failed", " ");
@@ -78,18 +79,19 @@ global $user_arrays;
 			// get location
 			$location = $_COOKIE['location'];
 
-			// checks if hour block has transaction					
-			$query = "SELECT id, DATE(timestamp) as date, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE hour=HOUR(NOW()) AND date=Date(NOW()) AND location = '$location'";
+			// checks if hour block has count
+			if (isset($_POST['next_hour_submission'])) {
+				$current_hour = date('H') + 1;
+			}
+			else {
+				$current_hour = date('H');
+			}	
+			$query = "SELECT id, HOUR(timestamp) AS hour, gate_number FROM `$default_table_name` WHERE DATE(timestamp)=DATE(NOW()) AND HOUR(timestamp)=$current_hour AND location = '$location'";
 			$result = mysqli_query($link, $query) or trigger_error(mysqli_error()); 
 			$total_results = mysqli_num_rows($result);
 
-			// check if count exists for current hour
-			if ($total_results > 0){
-				$row = mysqli_fetch_assoc($result);
-				reporter("red", "Error: Count already recorded for this hour, please <a href='crud/edit.php?id={$row['id']}'>edit</a>", " ");
-			}
 			// check if counts submitted are equal and valid
-			elseif ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
+			if ($_POST['count1'] != $_POST['count2'] || !is_numeric($_POST['count1']) || !is_numeric($_POST['count2'])) {
 				reporter("red", "Error: Counts do not match or are not numbers.", " ");
 			}
 			// check that count does not exceed 999,999
@@ -99,7 +101,27 @@ global $user_arrays;
 			// check location set
 			elseif ($_COOKIE['location'] == 'NOPE') {
 				reporter("red", "Please Set Your Location", " ");
-			}							
+			}
+			// check if count exists for current hour
+			elseif ($total_results > 0){
+
+				// if not quietly submitting count for next hour block
+				
+				$current_hour_block = date('H');
+				$next_hour_block = $current_hour_block + 1;
+
+				// check if count is within 15 minutes of hour block, and offer to save
+				if (date('i') > 15 && !isset($_POST['next_hour_submission'])){
+					echo reporter("red", "Error: Count already recorded for this hour.", " ");
+					echo reporter("green", "<form id='near_hour_block_form' action='.' method='POST'><input type='hidden' name='count1' value='{$_POST['count1']}'><input type='hidden' name='count2' value='{$_POST['count2']}'><input type='hidden' name='next_hour_submission' value='1'><strong><a href='#' onclick='document.getElementById(\"near_hour_block_form\").submit()'>NOTE: We are close to the next hour.<br>Click to submit count '{$_POST['count1']}' for {$hour_blocks[$next_hour_block]}.</a></form></strong>", " ");
+				}
+
+				else {
+					reporter("red", "Error: Count already recorded for this hour, please select a different hour block.", " ");
+				}				
+			}
+
+			// submit count
 			else {	
 
 				// SUBMIT GATE COUNT
@@ -108,7 +130,12 @@ global $user_arrays;
 					$hour_block_timestamp --> dropping back to 00 minute of current hour (only one allowed for per hour block)
 					$original_timestamp --> actual time of transaction, preserved in DB
 				*/
-				$hour_block_timestamp = date("Y-m-d H");
+				if (isset($_POST['next_hour_submission'])) {
+					$hour_block_timestamp = date("Y-m-d H", strtotime('+1 hours'));
+				}
+				else {
+					$hour_block_timestamp = date("Y-m-d H");
+				}
 				$original_timestamp = date("Y-m-d H:i:s");
 
 				// truncate count
