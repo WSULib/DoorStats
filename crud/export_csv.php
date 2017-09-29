@@ -41,7 +41,7 @@ $selected_locations = array();
 
 
 // All transactions in date range (appropriate for csv export)
-$full_query = "SELECT gate_number, building, location, DAYNAME(timestamp) as day_of_week, timestamp AS ordering_timestamp FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' AND $location_where ORDER BY ordering_timestamp DESC";
+$full_query = "SELECT gate_number, building, location, DAYNAME(timestamp) as day_of_week, DATE_FORMAT(timestamp, '%l %p') AS hour_block, original_timestamp FROM $default_table_name WHERE DATE(timestamp) >= '$date_start' AND DATE(timestamp) <= '$date_end' AND $location_where ORDER BY hour_block DESC";
 $result = mysqli_query($link, $full_query) or trigger_error(mysqli_error());
 
 $fp = fopen('php://output', 'w');
