@@ -27,7 +27,7 @@ CREATE TABLE `door_stats_dev` (
   `gate_number` int(45) NOT NULL,
   `location` varchar(255) NOT NULL,
   `building` varchar(255) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `original_timestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ip` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
